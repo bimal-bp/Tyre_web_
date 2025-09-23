@@ -1,1 +1,170 @@
-<h> hii </h>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tyre Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        header {
+            margin-bottom: 50px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+        }
+        
+        .boxes-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .box {
+            width: 250px;
+            height: 250px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid #eaecee;
+        }
+        
+        .box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: #3498db;
+        }
+        
+        .box-icon {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: #3498db;
+        }
+        
+        .box-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .box-desc {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            line-height: 1.5;
+        }
+        
+        footer {
+            margin-top: 60px;
+            color: #95a5a6;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 900px) {
+            .boxes-container {
+                gap: 20px;
+            }
+            
+            .box {
+                width: 220px;
+                height: 220px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .boxes-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .box {
+                width: 100%;
+                max-width: 300px;
+                height: 200px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Tyre Management System</h1>
+            <p class="subtitle">Access our tyre management tools</p>
+        </header>
+        
+        <div class="boxes-container">
+            <a href="https://willpackprasanta.github.io/new-tyre-entry/" class="box" target="_blank">
+                <i class="fas fa-plus-circle box-icon"></i>
+                <div class="box-content">
+                    <h3 class="box-title">New Tyre Entry</h3>
+                    <p class="box-desc">Add new tyres to your inventory</p>
+                </div>
+            </a>
+            
+            <a href="https://willpackprasanta.github.io/Tyre_full_web/" class="box" target="_blank">
+                <i class="fas fa-tachometer-alt box-icon"></i>
+                <div class="box-content">
+                    <h3 class="box-title">Tyre Full Web</h3>
+                    <p class="box-desc">Complete tyre management dashboard</p>
+                </div>
+            </a>
+            
+            <a href="https://willpackprasanta.github.io/Tyre_Inspect/" class="box" target="_blank">
+                <i class="fas fa-search box-icon"></i>
+                <div class="box-content">
+                    <h3 class="box-title">Tyre Inspect</h3>
+                    <p class="box-desc">Perform tyre inspections and tracking</p>
+                </div>
+            </a>
+        </div>
+        
+        <footer>
+            <p>Tyre Management System &copy; 2023</p>
+        </footer>
+    </div>
+</body>
+</html>
