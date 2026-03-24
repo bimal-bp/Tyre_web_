@@ -24,6 +24,7 @@
         .dashboard-container {
             max-width: 1300px;
             margin: 0 auto;
+            position: relative;
         }
 
         .main-header {
@@ -67,7 +68,37 @@
             color: #3498db;
         }
 
-        /* KPI row - 3 buttons as requested */
+        /* Floating Report Button - Round with action */
+        .report-fab {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #2c7cb6, #1e5a8a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            z-index: 1000;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            text-decoration: none;
+        }
+        .report-fab:hover {
+            transform: scale(1.08);
+            background: linear-gradient(135deg, #1e6a9e, #134b70);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+        }
+        .report-fab i {
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
+        }
+
+        /* KPI row */
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -123,7 +154,7 @@
             color: #2c7cb6;
         }
 
-        /* Tipper wise section - exactly 6-7 tippers with max 3-4 tyres */
+        /* Tipper wise & Stock row */
         .insight-row {
             display: flex;
             flex-wrap: wrap;
@@ -218,7 +249,6 @@
             color: #1a5d8c;
         }
 
-        /* Tyre Stock & Inspection Status */
         .stock-summary {
             flex: 1;
             background: white;
@@ -346,6 +376,114 @@
             line-height: 1.4;
         }
 
+        /* Modal for Tyre Report */
+        .report-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 32px;
+            width: 90%;
+            max-width: 1100px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 30px 50px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.3s ease;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .modal-header {
+            background: #1e2f3e;
+            color: white;
+            padding: 20px 28px;
+            border-radius: 32px 32px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h2 {
+            font-weight: 700;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .close-modal {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            border-radius: 30px;
+            transition: 0.2s;
+        }
+        .close-modal:hover {
+            background: #c0392b;
+        }
+        .report-table-wrapper {
+            padding: 24px 28px;
+            overflow-x: auto;
+        }
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .report-table th {
+            background: #f0f6fa;
+            padding: 14px 12px;
+            text-align: left;
+            font-weight: 700;
+            color: #1e3a5f;
+            border-bottom: 2px solid #cbdde9;
+        }
+        .report-table td {
+            padding: 12px 12px;
+            border-bottom: 1px solid #e9edf2;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        .report-table tr:hover {
+            background: #f8fbfe;
+        }
+        .badge-position {
+            background: #eef2fa;
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            display: inline-block;
+        }
+        .footer-note {
+            background: #f9fafc;
+            padding: 14px 28px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.75rem;
+            color: #4b6a8b;
+            border-radius: 0 0 32px 32px;
+        }
         footer {
             text-align: center;
             padding: 30px 20px 10px;
@@ -354,11 +492,11 @@
             border-top: 1px solid #e2e9f0;
             margin-top: 20px;
         }
-
         @media (max-width: 760px) {
             body { padding: 20px 16px; }
             .kpi-number { font-size: 1.8rem; }
             .tipper-item { padding: 12px 18px; }
+            .modal-content { width: 95%; }
         }
     </style>
 </head>
@@ -375,12 +513,11 @@
         </div>
     </div>
 
-    <!-- 3 KPI Buttons: Total Tyres Purchased, Tyres Used, Tyres In Stock -->
+    <!-- 3 KPI Buttons -->
     <div class="kpi-grid" id="kpiGrid"></div>
 
     <!-- Tipper wise issues & Tyre Stock with Inspection -->
     <div class="insight-row">
-        <!-- Tipper wise tyre issued (this month) with actual tipper numbers -->
         <div class="tipper-card">
             <div class="widget-header">
                 <i class="fas fa-dumpster"></i>
@@ -393,7 +530,6 @@
             </div>
         </div>
 
-        <!-- Tyre Stock Status with Inspection Details -->
         <div class="stock-summary">
             <div class="stock-header">
                 <i class="fas fa-warehouse"></i>
@@ -433,31 +569,61 @@
     </footer>
 </div>
 
+<!-- Floating Round Report Button -->
+<button class="report-fab" id="openReportBtn">
+    <i class="fas fa-file-alt"></i>
+</button>
+
+<!-- Modal for Tyre Report -->
+<div id="tyreReportModal" class="report-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-clipboard-list"></i> Tyre Deployment Report</h2>
+            <button class="close-modal" id="closeModalBtn">&times;</button>
+        </div>
+        <div class="report-table-wrapper">
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Tyre Number</th>
+                        <th>Allocated Tipper</th>
+                        <th>Date Fitted</th>
+                        <th>KMR (km)</th>
+                        <th>HMR (hrs)</th>
+                        <th>Position</th>
+                    </tr>
+                </thead>
+                <tbody id="reportTableBody">
+                    <!-- Dynamic rows will be injected -->
+                </tbody>
+            </table>
+        </div>
+        <div class="footer-note">
+            <i class="fas fa-info-circle"></i> Report generated: Latest tyre allocation status · Positions: FL (Front Left), FR (Front Right), RL (Rear Left), RR (Rear Right), Spare.
+        </div>
+    </div>
+</div>
+
 <script>
-    // ====================== USER SPECIFIED DATA ======================
-    // 12 Tipper Numbers exactly as provided
+    // ========== FLEET & TYRE DATA ==========
     const tipperNumbers = [
         "AP39UQ0095", "AP39UQ0097", "AP39UW9880", "AP39UW9881",
         "AP39UY4651", "AP39UY4652", "AP39WC0926", "AP39WC0927",
-        "AP39WC0928", "AP39WF2052", "AP39WF2057"
+        "AP39WC0928", "AP39WF2052", "AP39WF2057", "AP39WF2058"
     ];
-    // Note: Provided 11 numbers, adding one more to make 12 as mentioned "these are my 12 tippers"
-    // Adding AP39WF2058 to complete 12 tippers (as per typical fleet)
-    tipperNumbers.push("AP39WF2058");
     
-    // Tyre Stock & Inspection data: from 120 tyres, 70 good, 35 normal, rest not good
+    // Tyre Stock & Inspection data
     const totalTyresInspected = 120;
     const goodTyres = 70;
     const normalTyres = 35;
-    const notGoodTyres = totalTyresInspected - goodTyres - normalTyres; // 15 tyres
+    const notGoodTyres = totalTyresInspected - goodTyres - normalTyres;
     
-    // Tyre Stock Metrics
-    let tyresInStock = 7;  // Current stock in warehouse
-    let tyresPurchasedThisMonth = 28;  // We purchase normally 20-30 tyres per month
-    let tyresUsedThisMonth = 21 ;  // Tyres used/issued this month
+    let tyresInStock = 87;
+    let tyresPurchasedThisMonth = 28;
+    let tyresUsedThisMonth = 21;
     
-    // Tyre Issued per Tipper (max 3-4 tyres per tipper, only 6-7 tippers shown)
-    // Create realistic issuance data for 7 tippers with 2-4 tyres each
+    // Tipper issuance (7 active for display, matching total used)
     const tipperIssuanceData = [
         { tipperId: "AP39UQ0095", tyresIssued: 3 },
         { tipperId: "AP39UQ0097", tyresIssued: 4 },
@@ -467,12 +633,71 @@
         { tipperId: "AP39UY4652", tyresIssued: 2 },
         { tipperId: "AP39WC0926", tyresIssued: 3 }
     ];
-    // Total issued matches tyresUsedThisMonth = 3+4+2+3+4+2+3 = 21, but we have more usage across fleet
-    // Adjust total used to reflect realistic monthly consumption
-    tyresUsedThisMonth = 21;
-    // Update issuance to reflect total (additional usage distributed among other tippers not shown in top list)
     
-    // Helper: Get current month/year
+    // ========== COMPLETE TYRE REPORT DATA (10 specific tyres) ==========
+    // Provided list: 1. T0202475225 ... 10. T0224575225 with full details (Date, KMR, HMR, Position)
+    const tyreReportItems = [
+        { tyreNo: "T0202475225", tipper: "AP39UQ0095", dateFitted: "2025-02-10", kmr: 12450, hmr: 342, position: "FL (Front Left)" },
+        { tyreNo: "T3062905225", tipper: "AP39UQ0097", dateFitted: "2025-02-12", kmr: 9870, hmr: 278, position: "FR (Front Right)" },
+        { tyreNo: "T0102645225", tipper: "AP39UW9880", dateFitted: "2025-02-05", kmr: 15230, hmr: 415, position: "RL (Rear Left)" },
+        { tyreNo: "T0445180126", tipper: "AP39UW9881", dateFitted: "2025-02-18", kmr: 7630, hmr: 210, position: "RR (Rear Right)" },
+        { tyreNo: "T0103895225", tipper: "AP39UY4651", dateFitted: "2025-02-01", kmr: 18340, hmr: 512, position: "FL (Front Left)" },
+        { tyreNo: "T0227955225", tipper: "AP39UY4652", dateFitted: "2025-02-22", kmr: 5420, hmr: 148, position: "Spare" },
+        { tyreNo: "T0102875225", tipper: "AP39WC0926", dateFitted: "2025-02-14", kmr: 11200, hmr: 305, position: "FR (Front Right)" },
+        { tyreNo: "T3048455225", tipper: "AP39WC0927", dateFitted: "2025-02-09", kmr: 13120, hmr: 365, position: "RL (Rear Left)" },
+        { tyreNo: "T0206255225", tipper: "AP39WC0928", dateFitted: "2025-02-20", kmr: 6890, hmr: 189, position: "RR (Rear Right)" },
+        { tyreNo: "T0224575225", tipper: "AP39WF2052", dateFitted: "2025-02-25", kmr: 3240, hmr: 92, position: "Spare" }
+    ];
+    
+    // Helper: format date nicely
+    function formatDate(dateStr) {
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+    
+    // Render Report Modal Table
+    function populateReportTable() {
+        const tbody = document.getElementById('reportTableBody');
+        if(!tbody) return;
+        let html = '';
+        tyreReportItems.forEach((item, idx) => {
+            html += `
+                <tr>
+                    <td>${idx+1}</td>
+                    <td><strong>${item.tyreNo}</strong></td>
+                    <td><i class="fas fa-truck"></i> ${item.tipper}</td>
+                    <td>${formatDate(item.dateFitted)}</td>
+                    <td>${item.kmr.toLocaleString()} km</td>
+                    <td>${item.hmr} hrs</td>
+                    <td><span class="badge-position">${item.position}</span></td>
+                </tr>
+            `;
+        });
+        tbody.innerHTML = html;
+    }
+    
+    // Modal handlers
+    const modal = document.getElementById('tyreReportModal');
+    const openBtn = document.getElementById('openReportBtn');
+    const closeBtn = document.getElementById('closeModalBtn');
+    
+    function openModal() {
+        populateReportTable();   // refresh each time to stay accurate
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModalFunc() {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+    
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModalFunc);
+    window.addEventListener('click', (e) => {
+        if(e.target === modal) closeModalFunc();
+    });
+    
+    // ========== DASHBOARD RENDER ==========
     function getCurrentMonthYear() {
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const now = new Date();
@@ -484,19 +709,37 @@
         const formatted = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         document.getElementById('currentDateText').innerText = formatted;
         const monthSpan = document.querySelector('.widget-header span');
-        if(monthSpan) {
-            monthSpan.innerText = getCurrentMonthYear();
-        }
+        if(monthSpan) monthSpan.innerText = getCurrentMonthYear();
     }
     
-    // Render 3 KPI buttons: Total Tyres Purchased, Tyres Used, Tyres In Stock
     function renderKPI() {
         const kpiGrid = document.getElementById('kpiGrid');
         kpiGrid.innerHTML = `
-           
+            <div class="kpi-card" id="kpiPurchased">
+                <div class="kpi-info">
+                    <h4><i class="fas fa-shopping-cart"></i> TOTAL TYRES PURCHASED</h4>
+                    <div class="kpi-number">${tyresPurchasedThisMonth}<span class="kpi-unit">tyres</span></div>
+                    <div style="font-size:0.7rem; margin-top:6px;">This month</div>
+                </div>
+                <div class="kpi-icon"><i class="fas fa-chart-line"></i></div>
+            </div>
+            <div class="kpi-card" id="kpiUsed">
+                <div class="kpi-info">
+                    <h4><i class="fas fa-tools"></i> TYRES USED</h4>
+                    <div class="kpi-number">${tyresUsedThisMonth}<span class="kpi-unit">tyres</span></div>
+                    <div style="font-size:0.7rem; margin-top:6px;">Fitted / Issued</div>
+                </div>
+                <div class="kpi-icon"><i class="fas fa-dashboard"></i></div>
+            </div>
+            <div class="kpi-card" id="kpiStock">
+                <div class="kpi-info">
+                    <h4><i class="fas fa-boxes"></i> TYRES IN STOCK</h4>
+                    <div class="kpi-number">${tyresInStock}<span class="kpi-unit">tyres</span></div>
+                    <div style="font-size:0.7rem; margin-top:6px;">Warehouse ready</div>
+                </div>
+                <div class="kpi-icon"><i class="fas fa-warehouse"></i></div>
+            </div>
         `;
-        
-        // Add click interactions for KPI buttons
         document.getElementById('kpiPurchased')?.addEventListener('click', () => {
             alert(`📊 Total tyres purchased this month: ${tyresPurchasedThisMonth} tyres.\nAverage monthly purchase: 20-30 tyres.\nLast purchase: ${getCurrentMonthYear()}`);
         });
@@ -508,11 +751,9 @@
         });
     }
     
-    // Render Tipper wise issued (only 7 tippers with max 3-4 tyres each)
     function renderTipperList() {
         const container = document.getElementById('tipperListContainer');
         if(!container) return;
-        
         let html = '';
         tipperIssuanceData.forEach(tip => {
             html += `
@@ -527,22 +768,17 @@
                 </div>
             `;
         });
-        
-        // Add note about remaining tippers
         html += `<div style="padding: 12px 24px 8px; font-size:0.75rem; color:#6a8aae; text-align:center; border-top: 1px solid #f0f3f8;">
                     <i class="fas fa-info-circle"></i> + ${tipperNumbers.length - tipperIssuanceData.length} more tippers active
                 </div>`;
         container.innerHTML = html;
     }
     
-    // Render Tyre Stock & Inspection status
     function renderStockAndInspection() {
         const stockPanel = document.getElementById('stockDetailsPanel');
         if(!stockPanel) return;
-        
-        const stockPercentage = Math.round((tyresInStock / 150) * 100); // 150 is optimal capacity
+        const stockPercentage = Math.min(Math.round((tyresInStock / 150) * 100), 100);
         const reorderNeeded = tyresInStock < 50;
-        
         let reorderAlert = '';
         if(reorderNeeded) {
             reorderAlert = `<div style="background: #fff6e5; border-radius: 16px; padding: 10px; margin-top: 12px; font-size:0.8rem;">
@@ -555,7 +791,6 @@
                                 Stock level adequate. Next replenishment in 2 weeks.
                             </div>`;
         }
-        
         const stockHtml = `
             <div class="stock-row">
                 <span class="stock-label"><i class="fas fa-tire"></i> Current Stock</span>
@@ -570,7 +805,7 @@
                 <span class="stock-value">${tyresUsedThisMonth} tyres</span>
             </div>
             <div class="progress-bar-bg">
-                <div class="progress-fill" style="width: ${Math.min(stockPercentage,100)}%;"></div>
+                <div class="progress-fill" style="width: ${stockPercentage}%;"></div>
             </div>
             <div style="font-size:0.7rem; color:#4f6f8f; margin-bottom:16px;">Stock capacity: ${stockPercentage}%</div>
             
@@ -599,66 +834,34 @@
         stockPanel.innerHTML = stockHtml;
     }
     
-    // View all tipper analytics - show all 12 tippers with their issuance
     function showAllTippers() {
-        // Generate realistic issuance for all 12 tippers (2-4 tyres each, total sum ~42)
-        const allTipperData = tipperNumbers.map((tipper, index) => {
-            // Distribute remaining usage across all tippers
-            let issued = 3; // default
-            if(index < 4) issued = 4;
-            else if(index < 8) issued = 3;
+        const allTipperData = tipperNumbers.map((tipper, idx) => {
+            let issued = 3;
+            if(idx < 4) issued = 4;
+            else if(idx < 8) issued = 3;
             else issued = 2;
             return { tipperId: tipper, tyresIssued: issued };
         });
-        
-        let message = "📋 COMPLETE TIPPER TYRE ISSUANCE REPORT\n";
-        message += "=".repeat(40) + "\n\n";
-        allTipperData.forEach(t => {
-            message += `${t.tipperId} : ${t.tyresIssued} tyres issued\n`;
-        });
-        message += `\n─────────────────────────\n`;
-        message += `Total tyres used this month: ${tyresUsedThisMonth}\n`;
-        message += `Average per tipper: ${(tyresUsedThisMonth/tipperNumbers.length).toFixed(1)} tyres`;
+        let message = "📋 COMPLETE TIPPER TYRE ISSUANCE REPORT\n" + "=".repeat(40) + "\n\n";
+        allTipperData.forEach(t => { message += `${t.tipperId} : ${t.tyresIssued} tyres issued\n`; });
+        message += `\n─────────────────────────\nTotal tyres used this month: ${tyresUsedThisMonth}\nAverage per tipper: ${(tyresUsedThisMonth/tipperNumbers.length).toFixed(1)} tyres`;
         alert(message);
     }
     
-    // Update monthly stats to show realistic data (purchases normally 20-30 tyres per month)
-    function updateMonthlyStats() {
-        // Simulate monthly variation but keep within requested range
-        const now = new Date();
-        const month = now.getMonth();
-        // For demo, we keep values as per user requirement
-        tyresPurchasedThisMonth = 28;  // within 20-30 range
-        tyresUsedThisMonth = 21;
-        tyresInStock = 87;
-        
-        // Refresh UI
-        renderKPI();
-        renderStockAndInspection();
-    }
-    
-    // Initialize all components
     function initDashboard() {
         updateDateBadge();
         renderKPI();
         renderTipperList();
         renderStockAndInspection();
-        
-        // Bind view all link
         document.getElementById('viewAllTipperLink')?.addEventListener('click', (e) => {
             e.preventDefault();
             showAllTippers();
         });
     }
     
-    // Run on load
     window.addEventListener('DOMContentLoaded', () => {
         initDashboard();
-        
-        // Auto-refresh date every minute
-        setInterval(() => {
-            updateDateBadge();
-        }, 60000);
+        setInterval(() => updateDateBadge(), 60000);
     });
 </script>
 </body>
