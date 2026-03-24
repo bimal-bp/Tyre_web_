@@ -549,7 +549,7 @@
             </table>
         </div>
         <div class="footer-note">
-            <i class="fas fa-info-circle"></i> Report generated: Latest tyre allocation status · Positions: FLO, CRO, FL, FR, RL, RR, Spare (randomized per tyre)
+            <i class="fas fa-info-circle"></i> Report generated: Latest tyre allocation status · Positions: FLO, CRO, FL, BRO, BLO, CRI, Spare (randomized per tyre)
         </div>
     </div>
 </div>
@@ -584,7 +584,7 @@
     
     // ========== TYRE REPORT ITEMS WITH RANDOMIZED POSITIONS ==========
     // Provided base tyre data: 10 specific tyres, now we assign random positions from allowed set: FLO, CRO, FL, FR, RL, RR, Spare
-    const positionOptions = ["FLO", "CRO", "FL", "FR", "RL", "RR", "Spare"];
+    const positionOptions = ["FLO", "CRO", "FL", "FR", "BLO", "CRO", "BRI"];
     
     function getRandomPosition() {
         return positionOptions[Math.floor(Math.random() * positionOptions.length)];
