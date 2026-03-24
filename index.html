@@ -469,7 +469,7 @@
     ];
     // Total issued matches tyresUsedThisMonth = 3+4+2+3+4+2+3 = 21, but we have more usage across fleet
     // Adjust total used to reflect realistic monthly consumption
-    tyresUsedThisMonth = 42;
+    tyresUsedThisMonth = 21;
     // Update issuance to reflect total (additional usage distributed among other tippers not shown in top list)
     
     // Helper: Get current month/year
@@ -591,7 +591,7 @@
                     </div>
                 </div>
                 <div style="margin-top: 12px; font-size:0.75rem; color:#5c6f87; border-top: 1px solid #e9ecef; padding-top: 10px;">
-                    <i class="fas fa-chart-pie"></i> Total inspected: ${totalTyresInspected} tyres
+                    <i class="fas fa-chart-pie"></i> Tyre Avg Life -- 4652 KM 
                 </div>
             </div>
             ${reorderAlert}
@@ -629,7 +629,7 @@
         const month = now.getMonth();
         // For demo, we keep values as per user requirement
         tyresPurchasedThisMonth = 28;  // within 20-30 range
-        tyresUsedThisMonth = 42;
+        tyresUsedThisMonth = 21;
         tyresInStock = 87;
         
         // Refresh UI
