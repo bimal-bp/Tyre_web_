@@ -68,91 +68,40 @@
             color: #3498db;
         }
 
-        /* Floating Report Button - Round with action */
-        .report-fab {
+        /* Large Report Button - Text + Icon */
+        .report-fab-large {
             position: fixed;
             bottom: 32px;
             right: 32px;
-            width: 64px;
-            height: 64px;
             background: linear-gradient(135deg, #2c7cb6, #1e5a8a);
-            border-radius: 50%;
+            padding: 14px 28px;
+            border-radius: 60px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 12px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
             cursor: pointer;
             transition: all 0.25s ease;
             z-index: 1000;
             border: none;
             color: white;
-            font-size: 1.8rem;
+            font-size: 1.1rem;
+            font-weight: 600;
             text-decoration: none;
+            font-family: 'Inter', sans-serif;
         }
-        .report-fab:hover {
-            transform: scale(1.08);
+        .report-fab-large i {
+            font-size: 1.4rem;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
+        }
+        .report-fab-large:hover {
+            transform: scale(1.05);
             background: linear-gradient(135deg, #1e6a9e, #134b70);
             box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
         }
-        .report-fab i {
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
-        }
 
-        /* KPI row */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            margin-bottom: 48px;
-        }
-        .kpi-card {
-            background: #ffffff;
-            border-radius: 28px;
-            padding: 24px 20px;
-            box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.08);
-            transition: all 0.2s ease;
-            border: 1px solid rgba(0,0,0,0.04);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-        }
-        .kpi-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.12);
-            border-color: #3498db;
-        }
-        .kpi-info h4 {
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #5d7184;
-            margin-bottom: 8px;
-        }
-        .kpi-number {
-            font-size: 2.3rem;
-            font-weight: 800;
-            color: #1e2f3e;
-            line-height: 1.1;
-        }
-        .kpi-unit {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #5f7f9e;
-            margin-left: 4px;
-        }
-        .kpi-icon {
-            width: 52px;
-            height: 52px;
-            background: #eef3fc;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            color: #2c7cb6;
-        }
+        /* KPI row removed - no buttons, no space */
+        /* No kpi-grid container at all - removed from DOM */
 
         /* Tipper wise & Stock row */
         .insight-row {
@@ -494,9 +443,9 @@
         }
         @media (max-width: 760px) {
             body { padding: 20px 16px; }
-            .kpi-number { font-size: 1.8rem; }
             .tipper-item { padding: 12px 18px; }
             .modal-content { width: 95%; }
+            .report-fab-large { padding: 10px 20px; font-size: 0.9rem; bottom: 20px; right: 20px; }
         }
     </style>
 </head>
@@ -513,9 +462,8 @@
         </div>
     </div>
 
-    <!-- 3 KPI Buttons -->
-    <div class="kpi-grid" id="kpiGrid"></div>
-
+    <!-- KPI section is FULLY REMOVED (no buttons, no leftover spacing) -->
+    
     <!-- Tipper wise issues & Tyre Stock with Inspection -->
     <div class="insight-row">
         <div class="tipper-card">
@@ -569,9 +517,10 @@
     </footer>
 </div>
 
-<!-- Floating Round Report Button -->
-<button class="report-fab" id="openReportBtn">
-    <i class="fas fa-file-alt"></i>
+<!-- Large Report Button with Text -->
+<button class="report-fab-large" id="openReportBtn">
+    <i class="fas fa-file-alt"></i> 
+    <span>📋 Tyre Report</span>
 </button>
 
 <!-- Modal for Tyre Report -->
@@ -595,12 +544,12 @@
                     </tr>
                 </thead>
                 <tbody id="reportTableBody">
-                    <!-- Dynamic rows will be injected -->
+                    <!-- Dynamic rows will be injected with random positions (FLO, CRO, FL, FR etc) -->
                 </tbody>
             </table>
         </div>
         <div class="footer-note">
-            <i class="fas fa-info-circle"></i> Report generated: Latest tyre allocation status · Positions: FL (Front Left), FR (Front Right), RL (Rear Left), RR (Rear Right), Spare.
+            <i class="fas fa-info-circle"></i> Report generated: Latest tyre allocation status · Positions: FLO, CRO, FL, FR, RL, RR, Spare (randomized per tyre)
         </div>
     </div>
 </div>
@@ -613,17 +562,16 @@
         "AP39WC0928", "AP39WF2052", "AP39WF2057", "AP39WF2058"
     ];
     
-    // Tyre Stock & Inspection data
+    // Tyre Stock & Inspection data (dynamic)
+    let tyresInStock = 87;
+    let tyresPurchasedThisMonth = 28;
+    let tyresUsedThisMonth = 21;
     const totalTyresInspected = 120;
     const goodTyres = 70;
     const normalTyres = 35;
     const notGoodTyres = totalTyresInspected - goodTyres - normalTyres;
     
-    let tyresInStock = 87;
-    let tyresPurchasedThisMonth = 28;
-    let tyresUsedThisMonth = 21;
-    
-    // Tipper issuance (7 active for display, matching total used)
+    // Tipper issuance (active for display)
     const tipperIssuanceData = [
         { tipperId: "AP39UQ0095", tyresIssued: 3 },
         { tipperId: "AP39UQ0097", tyresIssued: 4 },
@@ -634,20 +582,37 @@
         { tipperId: "AP39WC0926", tyresIssued: 3 }
     ];
     
-    // ========== COMPLETE TYRE REPORT DATA (10 specific tyres) ==========
-    // Provided list: 1. T0202475225 ... 10. T0224575225 with full details (Date, KMR, HMR, Position)
-    const tyreReportItems = [
-        { tyreNo: "T0202475225", tipper: "AP39UQ0095", dateFitted: "2025-02-10", kmr: 12450, hmr: 342, position: "FL (Front Left)" },
-        { tyreNo: "T3062905225", tipper: "AP39UQ0097", dateFitted: "2025-02-12", kmr: 9870, hmr: 278, position: "FR (Front Right)" },
-        { tyreNo: "T0102645225", tipper: "AP39UW9880", dateFitted: "2025-02-05", kmr: 15230, hmr: 415, position: "RL (Rear Left)" },
-        { tyreNo: "T0445180126", tipper: "AP39UW9881", dateFitted: "2025-02-18", kmr: 7630, hmr: 210, position: "RR (Rear Right)" },
-        { tyreNo: "T0103895225", tipper: "AP39UY4651", dateFitted: "2025-02-01", kmr: 18340, hmr: 512, position: "FL (Front Left)" },
-        { tyreNo: "T0227955225", tipper: "AP39UY4652", dateFitted: "2025-02-22", kmr: 5420, hmr: 148, position: "Spare" },
-        { tyreNo: "T0102875225", tipper: "AP39WC0926", dateFitted: "2025-02-14", kmr: 11200, hmr: 305, position: "FR (Front Right)" },
-        { tyreNo: "T3048455225", tipper: "AP39WC0927", dateFitted: "2025-02-09", kmr: 13120, hmr: 365, position: "RL (Rear Left)" },
-        { tyreNo: "T0206255225", tipper: "AP39WC0928", dateFitted: "2025-02-20", kmr: 6890, hmr: 189, position: "RR (Rear Right)" },
-        { tyreNo: "T0224575225", tipper: "AP39WF2052", dateFitted: "2025-02-25", kmr: 3240, hmr: 92, position: "Spare" }
+    // ========== TYRE REPORT ITEMS WITH RANDOMIZED POSITIONS ==========
+    // Provided base tyre data: 10 specific tyres, now we assign random positions from allowed set: FLO, CRO, FL, FR, RL, RR, Spare
+    const positionOptions = ["FLO", "CRO", "FL", "FR", "RL", "RR", "Spare"];
+    
+    function getRandomPosition() {
+        return positionOptions[Math.floor(Math.random() * positionOptions.length)];
+    }
+    
+    // Original fixed tyre data with deterministic positions but we randomize on each load to meet "keep as random" requirement.
+    // To make positions random but consistent per session, we generate on page load. However requirement says "tyre position should be like flo ,cro ,fl ,fr keep as random".
+    // So each time modal opens or page loads we will randomize positions. But for consistency across modal opens, we generate once and reuse.
+    // But we also want fresh random feel? We'll generate random positions at startup and keep them.
+    // However user may expect random distribution across the listed positions.
+    const baseTyreItems = [
+        { tyreNo: "T0202475225", tipper: "AP39UQ0095", dateFitted: "2025-02-10", kmr: 12450, hmr: 342 },
+        { tyreNo: "T3062905225", tipper: "AP39UQ0097", dateFitted: "2025-02-12", kmr: 9870, hmr: 278 },
+        { tyreNo: "T0102645225", tipper: "AP39UW9880", dateFitted: "2025-02-05", kmr: 15230, hmr: 415 },
+        { tyreNo: "T0445180126", tipper: "AP39UW9881", dateFitted: "2025-02-18", kmr: 7630, hmr: 210 },
+        { tyreNo: "T0103895225", tipper: "AP39UY4651", dateFitted: "2025-02-01", kmr: 18340, hmr: 512 },
+        { tyreNo: "T0227955225", tipper: "AP39UY4652", dateFitted: "2025-02-22", kmr: 5420, hmr: 148 },
+        { tyreNo: "T0102875225", tipper: "AP39WC0926", dateFitted: "2025-02-14", kmr: 11200, hmr: 305 },
+        { tyreNo: "T3048455225", tipper: "AP39WC0927", dateFitted: "2025-02-09", kmr: 13120, hmr: 365 },
+        { tyreNo: "T0206255225", tipper: "AP39WC0928", dateFitted: "2025-02-20", kmr: 6890, hmr: 189 },
+        { tyreNo: "T0224575225", tipper: "AP39WF2052", dateFitted: "2025-02-25", kmr: 3240, hmr: 92 }
     ];
+    
+    // Create tyreReportItems with randomized positions (consistent across modal calls)
+    let tyreReportItems = baseTyreItems.map(item => ({
+        ...item,
+        position: getRandomPosition()
+    }));
     
     // Helper: format date nicely
     function formatDate(dateStr) {
@@ -682,7 +647,7 @@
     const closeBtn = document.getElementById('closeModalBtn');
     
     function openModal() {
-        populateReportTable();   // refresh each time to stay accurate
+        populateReportTable();   // always render latest
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
     }
@@ -712,44 +677,7 @@
         if(monthSpan) monthSpan.innerText = getCurrentMonthYear();
     }
     
-    function renderKPI() {
-        const kpiGrid = document.getElementById('kpiGrid');
-        kpiGrid.innerHTML = `
-            <div class="kpi-card" id="kpiPurchased">
-                <div class="kpi-info">
-                    <h4><i class="fas fa-shopping-cart"></i> TOTAL TYRES PURCHASED</h4>
-                    <div class="kpi-number">${tyresPurchasedThisMonth}<span class="kpi-unit">tyres</span></div>
-                    <div style="font-size:0.7rem; margin-top:6px;">This month</div>
-                </div>
-                <div class="kpi-icon"><i class="fas fa-chart-line"></i></div>
-            </div>
-            <div class="kpi-card" id="kpiUsed">
-                <div class="kpi-info">
-                    <h4><i class="fas fa-tools"></i> TYRES USED</h4>
-                    <div class="kpi-number">${tyresUsedThisMonth}<span class="kpi-unit">tyres</span></div>
-                    <div style="font-size:0.7rem; margin-top:6px;">Fitted / Issued</div>
-                </div>
-                <div class="kpi-icon"><i class="fas fa-dashboard"></i></div>
-            </div>
-            <div class="kpi-card" id="kpiStock">
-                <div class="kpi-info">
-                    <h4><i class="fas fa-boxes"></i> TYRES IN STOCK</h4>
-                    <div class="kpi-number">${tyresInStock}<span class="kpi-unit">tyres</span></div>
-                    <div style="font-size:0.7rem; margin-top:6px;">Warehouse ready</div>
-                </div>
-                <div class="kpi-icon"><i class="fas fa-warehouse"></i></div>
-            </div>
-        `;
-        document.getElementById('kpiPurchased')?.addEventListener('click', () => {
-            alert(`📊 Total tyres purchased this month: ${tyresPurchasedThisMonth} tyres.\nAverage monthly purchase: 20-30 tyres.\nLast purchase: ${getCurrentMonthYear()}`);
-        });
-        document.getElementById('kpiUsed')?.addEventListener('click', () => {
-            alert(`🔧 Tyres used this month: ${tyresUsedThisMonth} tyres.\nTipper consumption rate: ${(tyresUsedThisMonth / tipperNumbers.length).toFixed(1)} tyres per vehicle.\nMost used tipper: AP39UQ0097 (4 tyres)`);
-        });
-        document.getElementById('kpiStock')?.addEventListener('click', () => {
-            alert(`📦 Current stock: ${tyresInStock} tyres.\nInspection status: ${goodTyres} good, ${normalTyres} normal, ${notGoodTyres} need replacement.\nReorder recommended when stock below 50.`);
-        });
-    }
+    // KPI section removed completely — no rendering function needed for KPI grid
     
     function renderTipperList() {
         const container = document.getElementById('tipperListContainer');
@@ -850,7 +778,7 @@
     
     function initDashboard() {
         updateDateBadge();
-        renderKPI();
+        // No KPI rendering
         renderTipperList();
         renderStockAndInspection();
         document.getElementById('viewAllTipperLink')?.addEventListener('click', (e) => {
