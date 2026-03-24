@@ -493,30 +493,7 @@
     function renderKPI() {
         const kpiGrid = document.getElementById('kpiGrid');
         kpiGrid.innerHTML = `
-            <div class="kpi-card" id="kpiPurchased">
-                <div class="kpi-info">
-                    <h4><i class="fas fa-shopping-cart"></i> TOTAL TYRES PURCHASED</h4>
-                    <div class="kpi-number">${tyresPurchasedThisMonth}<span class="kpi-unit">tyres</span></div>
-                    <div style="font-size:0.7rem; margin-top:6px;">This month procurement</div>
-                </div>
-                <div class="kpi-icon"><i class="fas fa-truck-loading"></i></div>
-            </div>
-            <div class="kpi-card" id="kpiUsed">
-                <div class="kpi-info">
-                    <h4><i class="fas fa-chart-line"></i> TYRES USED</h4>
-                    <div class="kpi-number">${tyresUsedThisMonth}<span class="kpi-unit">tyres</span></div>
-                    <div style="font-size:0.7rem;">Month-to-date consumption</div>
-                </div>
-                <div class="kpi-icon"><i class="fas fa-oil-can"></i></div>
-            </div>
-            <div class="kpi-card" id="kpiStock">
-                <div class="kpi-info">
-                    <h4><i class="fas fa-boxes"></i> TYRES IN STOCK</h4>
-                    <div class="kpi-number">${tyresInStock}<span class="kpi-unit">tyres</span></div>
-                    <div style="font-size:0.7rem;">Current inventory level</div>
-                </div>
-                <div class="kpi-icon"><i class="fas fa-warehouse"></i></div>
-            </div>
+           
         `;
         
         // Add click interactions for KPI buttons
