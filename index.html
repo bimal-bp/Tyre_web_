@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Tyre Management System | Fleet Dashboard</title>
+    <title>Tyre Management System | Fleet Dashboard + Login Portal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,19 +14,160 @@
         }
 
         body {
-            background: linear-gradient(135deg, #f0f4fa 0%, #e9eef4 100%);
             font-family: 'Inter', 'Segoe UI', sans-serif;
-            color: #1a2634;
-            padding: 32px 24px;
+            background: linear-gradient(135deg, #eef2f9 0%, #e2e8f2 100%);
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
+        /* --- ANIMATED LOGIN OVERLAY (full screen intro) --- */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 30%, #0b2b3b, #071a24);
+            backdrop-filter: blur(2px);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1), visibility 0.6s;
+            visibility: visible;
+            opacity: 1;
+            font-family: 'Inter', sans-serif;
+        }
+        .login-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .login-card {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(16px);
+            border-radius: 56px;
+            width: 90%;
+            max-width: 460px;
+            padding: 40px 32px 48px;
+            text-align: center;
+            box-shadow: 0 35px 68px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255,255,255,0.2);
+            transform: translateY(0);
+            animation: floatIn 0.5s ease-out;
+            transition: transform 0.2s;
+        }
+        @keyframes floatIn {
+            0% { opacity: 0; transform: scale(0.96) translateY(30px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .login-icon {
+            font-size: 4rem;
+            background: linear-gradient(145deg, #1e5a8a, #0f3b57);
+            width: 100px;
+            height: 100px;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            box-shadow: 0 12px 22px -8px rgba(0,0,0,0.3);
+        }
+        .login-card h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(125deg, #1c3f5c, #2b6a9e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 12px;
+        }
+        .login-sub {
+            color: #4a627a;
+            font-weight: 500;
+            margin-bottom: 32px;
+            font-size: 0.9rem;
+            border-bottom: 1px dashed #cbdbe0;
+            display: inline-block;
+            padding-bottom: 6px;
+        }
+        .input-group {
+            text-align: left;
+            margin-bottom: 24px;
+            position: relative;
+        }
+        .input-group i {
+            position: absolute;
+            left: 18px;
+            top: 32px;
+            color: #7f8fa4;
+            font-size: 1.1rem;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px 18px 14px 48px;
+            font-size: 1rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 48px;
+            background: #ffffff;
+            font-family: 'Inter', monospace;
+            transition: all 0.2s;
+            outline: none;
+            font-weight: 500;
+        }
+        .input-group input:focus {
+            border-color: #2c7cb6;
+            box-shadow: 0 0 0 3px rgba(44,124,182,0.2);
+        }
+        .login-btn {
+            background: linear-gradient(95deg, #1f6392, #124e73);
+            border: none;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 14px 20px;
+            border-radius: 60px;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 12px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+        .login-btn:hover {
+            background: linear-gradient(95deg, #0f547c, #0a3f5e);
+            transform: scale(1.01);
+            box-shadow: 0 12px 22px rgba(0, 0, 0, 0.2);
+        }
+        .error-message {
+            background: #fee9e6;
+            color: #bc1c2e;
+            border-radius: 60px;
+            padding: 8px 18px;
+            font-size: 0.8rem;
+            margin-top: 20px;
+            display: inline-block;
+            font-weight: 500;
+        }
+        .demo-hint {
+            margin-top: 28px;
+            background: #eef3fc;
+            padding: 12px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            color: #2c5282;
+            border: 1px solid #cbdde9;
+        }
+        /* dashboard container (original style) */
         .dashboard-container {
             max-width: 1300px;
             margin: 0 auto;
             position: relative;
+            padding: 32px 24px;
         }
-
         .main-header {
             margin-bottom: 40px;
             display: flex;
@@ -63,47 +204,6 @@
             border: 1px solid rgba(52,152,219,0.3);
             color: #2c3e50;
         }
-        .date-badge i {
-            margin-right: 8px;
-            color: #3498db;
-        }
-
-        /* Large Report Button - Text + Icon */
-        .report-fab-large {
-            position: fixed;
-            bottom: 32px;
-            right: 32px;
-            background: linear-gradient(135deg, #2c7cb6, #1e5a8a);
-            padding: 14px 28px;
-            border-radius: 60px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-            cursor: pointer;
-            transition: all 0.25s ease;
-            z-index: 1000;
-            border: none;
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 600;
-            text-decoration: none;
-            font-family: 'Inter', sans-serif;
-        }
-        .report-fab-large i {
-            font-size: 1.4rem;
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
-        }
-        .report-fab-large:hover {
-            transform: scale(1.05);
-            background: linear-gradient(135deg, #1e6a9e, #134b70);
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
-        }
-
-        /* KPI row removed - no buttons, no space */
-        /* No kpi-grid container at all - removed from DOM */
-
-        /* Tipper wise & Stock row */
         .insight-row {
             display: flex;
             flex-wrap: wrap;
@@ -136,15 +236,6 @@
             font-size: 1.25rem;
             color: #2c3e50;
         }
-        .widget-header span {
-            font-size: 0.75rem;
-            background: #eef2fa;
-            padding: 4px 10px;
-            border-radius: 30px;
-            margin-left: auto;
-            font-weight: 500;
-            color: #2c5282;
-        }
         .tipper-list {
             padding: 8px 0 12px 0;
         }
@@ -156,9 +247,6 @@
             border-bottom: 1px solid #f0f3f8;
             transition: background 0.15s;
         }
-        .tipper-item:hover {
-            background: #fafcff;
-        }
         .tipper-name {
             font-weight: 600;
             display: flex;
@@ -166,11 +254,6 @@
             gap: 12px;
             font-family: monospace;
             font-size: 0.95rem;
-        }
-        .tipper-name i {
-            width: 28px;
-            color: #5f8bb3;
-            font-size: 1rem;
         }
         .issue-badge {
             background: #fee2e2;
@@ -193,11 +276,6 @@
             transition: 0.2s;
             cursor: pointer;
         }
-        .view-all-link:hover {
-            background: #eef6fc;
-            color: #1a5d8c;
-        }
-
         .stock-summary {
             flex: 1;
             background: white;
@@ -219,10 +297,6 @@
             font-size: 1.5rem;
             color: #27ae60;
         }
-        .stock-header h3 {
-            font-weight: 700;
-            font-size: 1.2rem;
-        }
         .stock-details {
             padding: 18px 24px;
             flex: 1;
@@ -232,14 +306,6 @@
             justify-content: space-between;
             margin-bottom: 18px;
             font-weight: 500;
-        }
-        .stock-label {
-            color: #5c6f87;
-        }
-        .stock-value {
-            font-weight: 700;
-            color: #1f2c38;
-            font-size: 1.1rem;
         }
         .progress-bar-bg {
             background: #e9ecef;
@@ -269,11 +335,6 @@
             font-weight: 600;
             margin-top: 8px;
         }
-        .good-status { background: #d4edda; color: #155724; }
-        .normal-status { background: #fff3cd; color: #856404; }
-        .poor-status { background: #f8d7da; color: #721c24; }
-
-        /* 3 main service boxes */
         .boxes-container {
             display: flex;
             justify-content: center;
@@ -312,20 +373,26 @@
             border-radius: 50%;
             color: #2c7cb6;
         }
-        .box-title {
-            font-size: 1.35rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: #1f2c3c;
+        .report-fab-large {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            background: linear-gradient(135deg, #2c7cb6, #1e5a8a);
+            padding: 14px 28px;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            z-index: 1000;
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
         }
-        .box-desc {
-            font-size: 0.85rem;
-            color: #5b6f88;
-            text-align: center;
-            line-height: 1.4;
-        }
-
-        /* Modal for Tyre Report */
+        /* Modal styles */
         .report-modal {
             display: none;
             position: fixed;
@@ -338,7 +405,6 @@
             z-index: 2000;
             justify-content: center;
             align-items: center;
-            font-family: 'Inter', sans-serif;
         }
         .modal-content {
             background: white;
@@ -347,18 +413,6 @@
             max-width: 1100px;
             max-height: 85vh;
             overflow-y: auto;
-            box-shadow: 0 30px 50px rgba(0,0,0,0.3);
-            animation: fadeInUp 0.3s ease;
-        }
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
         .modal-header {
             background: #1e2f3e;
@@ -369,13 +423,6 @@
             justify-content: space-between;
             align-items: center;
         }
-        .modal-header h2 {
-            font-weight: 700;
-            font-size: 1.6rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
         .close-modal {
             background: rgba(255,255,255,0.2);
             border: none;
@@ -385,37 +432,15 @@
             width: 44px;
             height: 44px;
             border-radius: 30px;
-            transition: 0.2s;
-        }
-        .close-modal:hover {
-            background: #c0392b;
-        }
-        .report-table-wrapper {
-            padding: 24px 28px;
-            overflow-x: auto;
         }
         .report-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.85rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        .report-table th {
-            background: #f0f6fa;
-            padding: 14px 12px;
+        .report-table th, .report-table td {
+            padding: 12px;
             text-align: left;
-            font-weight: 700;
-            color: #1e3a5f;
-            border-bottom: 2px solid #cbdde9;
-        }
-        .report-table td {
-            padding: 12px 12px;
             border-bottom: 1px solid #e9edf2;
-            color: #2c3e50;
-            font-weight: 500;
-        }
-        .report-table tr:hover {
-            background: #f8fbfe;
         }
         .badge-position {
             background: #eef2fa;
@@ -423,34 +448,50 @@
             border-radius: 50px;
             font-weight: 600;
             font-size: 0.75rem;
-            display: inline-block;
-        }
-        .footer-note {
-            background: #f9fafc;
-            padding: 14px 28px;
-            border-top: 1px solid #e2e8f0;
-            font-size: 0.75rem;
-            color: #4b6a8b;
-            border-radius: 0 0 32px 32px;
         }
         footer {
             text-align: center;
             padding: 30px 20px 10px;
             font-size: 0.8rem;
             color: #6f8dab;
-            border-top: 1px solid #e2e9f0;
-            margin-top: 20px;
         }
         @media (max-width: 760px) {
-            body { padding: 20px 16px; }
-            .tipper-item { padding: 12px 18px; }
-            .modal-content { width: 95%; }
-            .report-fab-large { padding: 10px 20px; font-size: 0.9rem; bottom: 20px; right: 20px; }
+            .dashboard-container { padding: 20px 16px; }
+            .login-card { padding: 32px 20px; }
         }
     </style>
 </head>
 <body>
-<div class="dashboard-container">
+
+<!-- animated login overlay (home login screen) -->
+<div class="login-overlay" id="loginOverlay">
+    <div class="login-card">
+        <div class="login-icon">
+            <i class="fas fa-charging-station"></i>
+        </div>
+        <h2>Tyre Management</h2>
+        <div class="login-sub">Fleet Intelligence Portal</div>
+        <div class="input-group">
+            <i class="fas fa-user-circle"></i>
+            <input type="text" id="loginUsername" placeholder="Username" autocomplete="off">
+        </div>
+        <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="loginPassword" placeholder="Password">
+        </div>
+        <button class="login-btn" id="doLoginBtn">
+            <i class="fas fa-arrow-right-to-bracket"></i> Access Dashboard
+        </button>
+        <div id="loginErrorMsg" class="error-message" style="display: none;">⚠️ Invalid credentials. Use: admin / tyremark</div>
+        <div class="demo-hint">
+            <i class="fas fa-key"></i> Demo: <strong>admin</strong> / <strong>tyremark</strong><br>
+            * Animated secure entry*
+        </div>
+    </div>
+</div>
+
+<!-- Main dashboard (initially hidden until login) -->
+<div class="dashboard-container" id="mainDashboard" style="display: none;">
     <div class="main-header">
         <div class="title-section">
             <h1><i class="fas fa-tachometer-alt" style="color: #2c7cb6; margin-right: 12px;"></i>Tyre Management System</h1>
@@ -462,22 +503,19 @@
         </div>
     </div>
 
-    <!-- KPI section is FULLY REMOVED (no buttons, no leftover spacing) -->
-    
-    <!-- Tipper wise issues & Tyre Stock with Inspection -->
+    <!-- Insight row -->
     <div class="insight-row">
         <div class="tipper-card">
             <div class="widget-header">
                 <i class="fas fa-dumpster"></i>
                 <h3>📊 Tyres Issued · Tipper Wise</h3>
-                <span>This Month</span>
+                <span id="monthLabel">This Month</span>
             </div>
             <div class="tipper-list" id="tipperListContainer"></div>
             <div class="view-all-link" id="viewAllTipperLink">
                 <i class="fas fa-chart-line"></i> View all tipper analytics →
             </div>
         </div>
-
         <div class="stock-summary">
             <div class="stock-header">
                 <i class="fas fa-warehouse"></i>
@@ -487,7 +525,7 @@
         </div>
     </div>
 
-    <!-- Service Boxes -->
+    <!-- Service Boxes - UPDATED LINK: Tyre Full Web (corrected) -->
     <div class="boxes-container">
         <a href="https://willpackprasanta.github.io/new-tyre-entry/" class="box" target="_blank">
             <div class="box-icon"><i class="fas fa-plus-circle"></i></div>
@@ -496,7 +534,8 @@
                 <p class="box-desc">Add tyres, batch & serial tracking</p>
             </div>
         </a>
-        <a href="https://bimal-bp.github.io/Tyre_full_web/" class="box" target="_blank">
+        <!-- FIXED: correct Tyre Full Web link -->
+        <a href="https://bimal-bp.github.io/new-tyre-web/" class="box" target="_blank" id="tyreFullWebLink">
             <div class="box-icon"><i class="fas fa-chalkboard-user"></i></div>
             <div class="box-content">
                 <h3 class="box-title">Tyre Full Web</h3>
@@ -511,58 +550,43 @@
             </div>
         </a>
     </div>
-    
     <footer>
         <p><i class="fas fa-charging-station"></i> Tyre Management Intelligence · Real-time fleet data &nbsp;|&nbsp; © 2025</p>
     </footer>
 </div>
 
-<!-- Large Report Button with Text -->
-<button class="report-fab-large" id="openReportBtn">
-    <i class="fas fa-file-alt"></i> 
-    <span>📋 Tyre Report</span>
+<!-- Report Button & Modal -->
+<button class="report-fab-large" id="openReportBtn" style="display: none;">
+    <i class="fas fa-file-alt"></i> <span>📋 Tyre Report</span>
 </button>
-
-<!-- Modal for Tyre Report -->
 <div id="tyreReportModal" class="report-modal">
     <div class="modal-content">
         <div class="modal-header">
             <h2><i class="fas fa-clipboard-list"></i> Tyre Deployment Report</h2>
             <button class="close-modal" id="closeModalBtn">&times;</button>
         </div>
-        <div class="report-table-wrapper">
+        <div class="report-table-wrapper" style="padding: 20px; overflow-x:auto;">
             <table class="report-table">
                 <thead>
-                    <tr>
-                        <th>S.No</th>
-                        <th>Tyre Number</th>
-                        <th>Allocated Tipper</th>
-                        <th>Date Fitted</th>
-                        <th>KMR (km)</th>
-                        <th>HMR (hrs)</th>
-                        <th>Position</th>
-                    </tr>
+                    <tr><th>S.No</th><th>Tyre Number</th><th>Allocated Tipper</th><th>Date Fitted</th><th>KMR (km)</th><th>HMR (hrs)</th><th>Position</th></tr>
                 </thead>
-                <tbody id="reportTableBody">
-                    <!-- Dynamic rows will be injected with random positions (FLO, CRO, FL, FR etc) -->
-                </tbody>
+                <tbody id="reportTableBody"></tbody>
             </table>
         </div>
-        <div class="footer-note">
-            <i class="fas fa-info-circle"></i> Report generated: Latest tyre allocation status · Positions: FLO, CRO, FL, BRO, BLO, CRI, Spare (randomized per tyre)
+        <div class="footer-note" style="padding: 12px 24px; background:#f9fafc; border-top:1px solid #e2e8f0;">
+            <i class="fas fa-info-circle"></i> Report generated: Latest tyre allocation · Positions randomized (FLO, CRO, FL, FR, BLO, etc)
         </div>
     </div>
 </div>
 
 <script>
-    // ========== FLEET & TYRE DATA ==========
+    // ========== FLEET DATA ==========
     const tipperNumbers = [
         "AP39UQ0095", "AP39UQ0097", "AP39UW9880", "AP39UW9881",
         "AP39UY4651", "AP39UY4652", "AP39WC0926", "AP39WC0927",
         "AP39WC0928", "AP39WF2052", "AP39WF2057", "AP39WF2058"
     ];
     
-    // Tyre Stock & Inspection data (dynamic)
     let tyresInStock = 7;
     let tyresPurchasedThisMonth = 28;
     let tyresUsedThisMonth = 21;
@@ -571,7 +595,6 @@
     const normalTyres = 35;
     const notGoodTyres = totalTyresInspected - goodTyres - normalTyres;
     
-    // Tipper issuance (active for display)
     const tipperIssuanceData = [
         { tipperId: "AP39UQ0095", tyresIssued: 3 },
         { tipperId: "AP39UQ0097", tyresIssued: 4 },
@@ -582,19 +605,10 @@
         { tipperId: "AP39WC0926", tyresIssued: 3 }
     ];
     
-    // ========== TYRE REPORT ITEMS WITH RANDOMIZED POSITIONS ==========
-    // Provided base tyre data: 10 specific tyres, now we assign random positions from allowed set: FLO, CRO, FL, FR, RL, RR, Spare
-    const positionOptions = ["FLO", "CRO", "FL", "FR", "BLO", "CRO", "BRI"];
+    // Tyre Report items (with random positions)
+    const positionOptions = ["FLO", "CRO", "FL", "FR", "BLO", "BRI", "Spare"];
+    function getRandomPosition() { return positionOptions[Math.floor(Math.random() * positionOptions.length)]; }
     
-    function getRandomPosition() {
-        return positionOptions[Math.floor(Math.random() * positionOptions.length)];
-    }
-    
-    // Original fixed tyre data with deterministic positions but we randomize on each load to meet "keep as random" requirement.
-    // To make positions random but consistent per session, we generate on page load. However requirement says "tyre position should be like flo ,cro ,fl ,fr keep as random".
-    // So each time modal opens or page loads we will randomize positions. But for consistency across modal opens, we generate once and reuse.
-    // But we also want fresh random feel? We'll generate random positions at startup and keep them.
-    // However user may expect random distribution across the listed positions.
     const baseTyreItems = [
         { tyreNo: "T0202475225", tipper: "AP39UQ0095", dateFitted: "2025-02-10", kmr: 12450, hmr: 342 },
         { tyreNo: "T3062905225", tipper: "AP39UQ0097", dateFitted: "2025-02-12", kmr: 9870, hmr: 278 },
@@ -608,93 +622,44 @@
         { tyreNo: "T0224575225", tipper: "AP39WF2052", dateFitted: "2025-02-25", kmr: 3240, hmr: 92 }
     ];
     
-    // Create tyreReportItems with randomized positions (consistent across modal calls)
-    let tyreReportItems = baseTyreItems.map(item => ({
-        ...item,
-        position: getRandomPosition()
-    }));
+    let tyreReportItems = baseTyreItems.map(item => ({ ...item, position: getRandomPosition() }));
     
-    // Helper: format date nicely
-    function formatDate(dateStr) {
-        const d = new Date(dateStr);
-        return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-    }
-    
-    // Render Report Modal Table
+    function formatDate(dateStr) { return new Date(dateStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
     function populateReportTable() {
         const tbody = document.getElementById('reportTableBody');
         if(!tbody) return;
         let html = '';
         tyreReportItems.forEach((item, idx) => {
-            html += `
-                <tr>
-                    <td>${idx+1}</td>
-                    <td><strong>${item.tyreNo}</strong></td>
-                    <td><i class="fas fa-truck"></i> ${item.tipper}</td>
-                    <td>${formatDate(item.dateFitted)}</td>
-                    <td>${item.kmr.toLocaleString()} km</td>
-                    <td>${item.hmr} hrs</td>
-                    <td><span class="badge-position">${item.position}</span></td>
-                </tr>
-            `;
+            html += `<tr>
+                <td>${idx+1}</td>
+                <td><strong>${item.tyreNo}</strong></td>
+                <td><i class="fas fa-truck"></i> ${item.tipper}</td>
+                <td>${formatDate(item.dateFitted)}</td>
+                <td>${item.kmr.toLocaleString()} km</td>
+                <td>${item.hmr} hrs</td>
+                <td><span class="badge-position">${item.position}</span></td>
+            </tr>`;
         });
         tbody.innerHTML = html;
     }
     
-    // Modal handlers
-    const modal = document.getElementById('tyreReportModal');
-    const openBtn = document.getElementById('openReportBtn');
-    const closeBtn = document.getElementById('closeModalBtn');
-    
-    function openModal() {
-        populateReportTable();   // always render latest
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
-    function closeModalFunc() {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-    
-    openBtn.addEventListener('click', openModal);
-    closeBtn.addEventListener('click', closeModalFunc);
-    window.addEventListener('click', (e) => {
-        if(e.target === modal) closeModalFunc();
-    });
-    
-    // ========== DASHBOARD RENDER ==========
-    function getCurrentMonthYear() {
-        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        const now = new Date();
-        return `${months[now.getMonth()]} ${now.getFullYear()}`;
-    }
-    
+    // Dashboard rendering functions
     function updateDateBadge() {
         const now = new Date();
-        const formatted = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        document.getElementById('currentDateText').innerText = formatted;
-        const monthSpan = document.querySelector('.widget-header span');
-        if(monthSpan) monthSpan.innerText = getCurrentMonthYear();
+        document.getElementById('currentDateText').innerText = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        const monthSpan = document.querySelector('#monthLabel');
+        if(monthSpan) monthSpan.innerText = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
     }
-    
-    // KPI section removed completely — no rendering function needed for KPI grid
     
     function renderTipperList() {
         const container = document.getElementById('tipperListContainer');
         if(!container) return;
         let html = '';
         tipperIssuanceData.forEach(tip => {
-            html += `
-                <div class="tipper-item">
-                    <div class="tipper-name">
-                        <i class="fas fa-truck"></i>
-                        <strong>${tip.tipperId}</strong>
-                    </div>
-                    <div class="issue-badge">
-                        <i class="fas fa-tyre" style="font-size:0.7rem;"></i> ${tip.tyresIssued} tyres
-                    </div>
-                </div>
-            `;
+            html += `<div class="tipper-item">
+                        <div class="tipper-name"><i class="fas fa-truck"></i> <strong>${tip.tipperId}</strong></div>
+                        <div class="issue-badge"><i class="fas fa-tyre"></i> ${tip.tyresIssued} tyres</div>
+                    </div>`;
         });
         html += `<div style="padding: 12px 24px 8px; font-size:0.75rem; color:#6a8aae; text-align:center; border-top: 1px solid #f0f3f8;">
                     <i class="fas fa-info-circle"></i> + ${tipperNumbers.length - tipperIssuanceData.length} more tippers active
@@ -704,93 +669,88 @@
     
     function renderStockAndInspection() {
         const stockPanel = document.getElementById('stockDetailsPanel');
-        if(!stockPanel) return;
         const stockPercentage = Math.min(Math.round((tyresInStock / 150) * 100), 100);
         const reorderNeeded = tyresInStock < 50;
-        let reorderAlert = '';
-        if(reorderNeeded) {
-            reorderAlert = `<div style="background: #fff6e5; border-radius: 16px; padding: 10px; margin-top: 12px; font-size:0.8rem;">
-                                <i class="fas fa-exclamation-triangle" style="color:#e67e22;"></i> 
-                                <strong>Low stock alert:</strong> Only ${tyresInStock} tyres remaining. Reorder recommended.
-                            </div>`;
-        } else {
-            reorderAlert = `<div style="background: #e8f5e9; border-radius: 16px; padding: 10px; margin-top: 12px; font-size:0.8rem;">
-                                <i class="fas fa-check-circle" style="color:#27ae60;"></i> 
-                                Stock level adequate. Next replenishment in 2 weeks.
-                            </div>`;
-        }
-        const stockHtml = `
-            <div class="stock-row">
-                <span class="stock-label"><i class="fas fa-tire"></i> Current Stock</span>
-                <span class="stock-value">${tyresInStock} tyres</span>
-            </div>
-            <div class="stock-row">
-                <span class="stock-label">Monthly Purchase</span>
-                <span class="stock-value">${tyresPurchasedThisMonth} tyres</span>
-            </div>
-            <div class="stock-row">
-                <span class="stock-label">Monthly Usage</span>
-                <span class="stock-value">${tyresUsedThisMonth} tyres</span>
-            </div>
-            <div class="progress-bar-bg">
-                <div class="progress-fill" style="width: ${stockPercentage}%;"></div>
-            </div>
-            <div style="font-size:0.7rem; color:#4f6f8f; margin-bottom:16px;">Stock capacity: ${stockPercentage}%</div>
-            
-            <div class="inspection-status">
-                <strong><i class="fas fa-clipboard-check"></i> Tyre Inspection Report</strong>
-                <div style="margin-top: 12px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <span>✅ Good Condition</span>
-                        <span class="status-badge good-status">${goodTyres} tyres</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <span>⚠️ Normal / Wear</span>
-                        <span class="status-badge normal-status">${normalTyres} tyres</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <span>❌ Not Good / Replace</span>
-                        <span class="status-badge poor-status">${notGoodTyres} tyres</span>
-                    </div>
-                </div>
-                <div style="margin-top: 12px; font-size:0.75rem; color:#5c6f87; border-top: 1px solid #e9ecef; padding-top: 10px;">
-                    <i class="fas fa-chart-pie"></i> Tyre Avg Life -- 4652 KM 
-                </div>
-            </div>
-            ${reorderAlert}
+        let reorderAlert = reorderNeeded ? `<div style="background: #fff6e5; border-radius: 16px; padding: 10px; margin-top: 12px;"><i class="fas fa-exclamation-triangle" style="color:#e67e22;"></i> <strong>Low stock alert:</strong> Only ${tyresInStock} tyres remaining. Reorder recommended.</div>` : `<div style="background: #e8f5e9; border-radius: 16px; padding: 10px; margin-top: 12px;"><i class="fas fa-check-circle" style="color:#27ae60;"></i> Stock level adequate.</div>`;
+        stockPanel.innerHTML = `
+            <div class="stock-row"><span class="stock-label"><i class="fas fa-tire"></i> Current Stock</span><span class="stock-value">${tyresInStock} tyres</span></div>
+            <div class="stock-row"><span class="stock-label">Monthly Purchase</span><span class="stock-value">${tyresPurchasedThisMonth} tyres</span></div>
+            <div class="stock-row"><span class="stock-label">Monthly Usage</span><span class="stock-value">${tyresUsedThisMonth} tyres</span></div>
+            <div class="progress-bar-bg"><div class="progress-fill" style="width: ${stockPercentage}%;"></div></div>
+            <div style="font-size:0.7rem; margin-bottom:16px;">Stock capacity: ${stockPercentage}%</div>
+            <div class="inspection-status"><strong><i class="fas fa-clipboard-check"></i> Tyre Inspection Report</strong>
+                <div style="margin-top:12px;"><div>✅ Good Condition: <span class="status-badge good-status">${goodTyres} tyres</span></div>
+                <div>⚠️ Normal: <span class="status-badge normal-status">${normalTyres} tyres</span></div>
+                <div>❌ Replace: <span class="status-badge poor-status">${notGoodTyres} tyres</span></div></div>
+                <div style="margin-top:12px; font-size:0.75rem;">⚙️ Tyre Avg Life: 4652 KM</div>
+            </div>${reorderAlert}
         `;
-        stockPanel.innerHTML = stockHtml;
     }
     
     function showAllTippers() {
         const allTipperData = tipperNumbers.map((tipper, idx) => {
-            let issued = 3;
-            if(idx < 4) issued = 4;
-            else if(idx < 8) issued = 3;
-            else issued = 2;
+            let issued = idx < 4 ? 4 : (idx < 8 ? 3 : 2);
             return { tipperId: tipper, tyresIssued: issued };
         });
-        let message = "📋 COMPLETE TIPPER TYRE ISSUANCE REPORT\n" + "=".repeat(40) + "\n\n";
-        allTipperData.forEach(t => { message += `${t.tipperId} : ${t.tyresIssued} tyres issued\n`; });
-        message += `\n─────────────────────────\nTotal tyres used this month: ${tyresUsedThisMonth}\nAverage per tipper: ${(tyresUsedThisMonth/tipperNumbers.length).toFixed(1)} tyres`;
+        let message = "📋 COMPLETE TIPPER REPORT\n" + "=".repeat(40) + "\n";
+        allTipperData.forEach(t => { message += `${t.tipperId} : ${t.tyresIssued} tyres\n`; });
+        message += `\nTotal used this month: ${tyresUsedThisMonth}\nAvg per tipper: ${(tyresUsedThisMonth/tipperNumbers.length).toFixed(1)}`;
         alert(message);
     }
     
-    function initDashboard() {
+    function initDashboardUI() {
         updateDateBadge();
-        // No KPI rendering
         renderTipperList();
         renderStockAndInspection();
-        document.getElementById('viewAllTipperLink')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            showAllTippers();
-        });
+        document.getElementById('viewAllTipperLink')?.addEventListener('click', (e) => { e.preventDefault(); showAllTippers(); });
+        const openBtn = document.getElementById('openReportBtn');
+        const modal = document.getElementById('tyreReportModal');
+        const closeBtn = document.getElementById('closeModalBtn');
+        if(openBtn) openBtn.onclick = () => { populateReportTable(); modal.style.display = 'flex'; document.body.style.overflow = 'hidden'; };
+        if(closeBtn) closeBtn.onclick = () => { modal.style.display = 'none'; document.body.style.overflow = 'auto'; };
+        window.onclick = (e) => { if(e.target === modal) { modal.style.display = 'none'; document.body.style.overflow = 'auto'; } };
     }
     
-    window.addEventListener('DOMContentLoaded', () => {
-        initDashboard();
-        setInterval(() => updateDateBadge(), 60000);
+    // ========== LOGIC FOR LOGIN + ANIMATION ==========
+    const loginOverlay = document.getElementById('loginOverlay');
+    const dashboardDiv = document.getElementById('mainDashboard');
+    const reportFab = document.getElementById('openReportBtn');
+    const loginBtn = document.getElementById('doLoginBtn');
+    const usernameInput = document.getElementById('loginUsername');
+    const passwordInput = document.getElementById('loginPassword');
+    const errorMsgDiv = document.getElementById('loginErrorMsg');
+    
+    function performLogin() {
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value.trim();
+        // hardcoded demo: admin / tyremark
+        if(username === 'admin' && password === 'tyremark') {
+            errorMsgDiv.style.display = 'none';
+            // animate out login overlay
+            loginOverlay.classList.add('hidden');
+            setTimeout(() => {
+                loginOverlay.style.display = 'none';
+                dashboardDiv.style.display = 'block';
+                reportFab.style.display = 'flex';
+                // init dashboard core
+                initDashboardUI();
+                // additional refresh for date
+                setInterval(() => updateDateBadge(), 60000);
+            }, 600);
+        } else {
+            errorMsgDiv.style.display = 'block';
+            setTimeout(() => { errorMsgDiv.style.display = 'none'; }, 2800);
+        }
+    }
+    
+    loginBtn.addEventListener('click', performLogin);
+    [usernameInput, passwordInput].forEach(inp => {
+        inp.addEventListener('keypress', (e) => { if(e.key === 'Enter') performLogin(); });
     });
+    
+    // (prevent dashboard flash)
+    dashboardDiv.style.display = 'none';
+    reportFab.style.display = 'none';
 </script>
 </body>
 </html>
