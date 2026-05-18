@@ -44,7 +44,6 @@
         }
         .login-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-        /* tread pattern BG on login */
         .login-overlay::before {
             content: '';
             position: absolute; inset: 0;
@@ -101,59 +100,40 @@
             letter-spacing: 3px; text-transform: uppercase;
             margin-bottom: 36px;
         }
-        .input-group { text-align: left; margin-bottom: 18px; position: relative; }
-        .input-group i {
-            position: absolute; left: 16px; top: 50%;
-            transform: translateY(-50%);
-            color: rgba(90,179,232,0.5); font-size: 0.95rem;
-        }
-        .input-group input {
-            width: 100%;
-            padding: 13px 16px 13px 44px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(90,179,232,0.2);
-            border-radius: 12px;
-            color: #e8f3fb;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .input-group input::placeholder { color: rgba(140,180,200,0.35); }
-        .input-group input:focus {
-            border-color: rgba(90,179,232,0.55);
-            box-shadow: 0 0 0 3px rgba(90,179,232,0.12);
-        }
+
+        /* One-click login button */
         .login-btn {
             width: 100%;
-            padding: 14px;
+            padding: 16px;
             background: linear-gradient(100deg, #1c6fa8, #0e4e7a);
             border: 1px solid rgba(90,179,232,0.3);
             border-radius: 12px;
             color: white;
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.25rem; letter-spacing: 2px;
+            font-size: 1.35rem; letter-spacing: 2px;
             cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 10px;
-            margin-top: 10px;
             transition: all 0.22s;
             box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
-        .login-btn:hover { background: linear-gradient(100deg,#2280be,#1558a0); transform:translateY(-1px); }
-        .error-message {
-            background: rgba(232,64,64,0.12); color: #ff7070;
-            border: 1px solid rgba(232,64,64,0.25);
-            border-radius: 8px; padding: 8px 14px;
-            font-size: 0.8rem; margin-top: 16px;
+        .login-btn:hover {
+            background: linear-gradient(100deg,#2280be,#1558a0);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(90,179,232,0.25);
         }
-        .demo-hint {
-            margin-top: 24px;
-            border-top: 1px solid rgba(90,179,232,0.1);
-            padding-top: 18px;
-            font-size: 0.72rem; color: rgba(140,180,200,0.45);
-            letter-spacing: 1px;
+        .login-btn:active { transform: translateY(0); }
+
+        .welcome-note {
+            margin-bottom: 28px;
+            background: rgba(90,179,232,0.08);
+            border: 1px solid rgba(90,179,232,0.15);
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 0.82rem;
+            color: rgba(180,215,235,0.7);
+            line-height: 1.6;
         }
-        .demo-hint strong { color: rgba(90,179,232,0.7); }
+        .welcome-note i { color: #5ab3e8; margin-right: 6px; }
 
         /* ============================
            SPLASH / INTRO ANIMATION SCREEN
@@ -168,7 +148,6 @@
             overflow: hidden;
         }
 
-        /* Road surface */
         #splashScreen::before {
             content: '';
             position: absolute;
@@ -178,7 +157,6 @@
             border-top: 2px solid rgba(90,179,232,0.12);
         }
 
-        /* Road dashes */
         .road-dashes {
             position: absolute;
             bottom: 15%;
@@ -194,7 +172,6 @@
         }
         .road-dash { width: 60px; height: 100%; background: rgba(240,165,0,0.55); border-radius: 2px; flex-shrink:0; }
 
-        /* The big rolling tyre */
         .splash-tyre-wrap {
             position: relative;
             z-index: 10;
@@ -210,7 +187,6 @@
             to   { transform: rotate(360deg); }
         }
 
-        /* Tyre SVG enter animation */
         .splash-tyre-wrap {
             animation: tyreSlideIn 0.6s cubic-bezier(0.25,1.1,0.5,1) both;
             animation-delay: 0.1s;
@@ -220,7 +196,6 @@
             to   { opacity: 1; transform: translateX(0); }
         }
 
-        /* Splash text */
         .splash-text-block {
             position: absolute;
             bottom: 18%;
@@ -250,7 +225,6 @@
             margin-top: 6px;
         }
 
-        /* Loading bar */
         .splash-loader-wrap {
             position: absolute;
             bottom: 9%;
@@ -281,7 +255,6 @@
             margin-top: 8px; text-align: right;
         }
 
-        /* Sparks / dust particles */
         .particle {
             position: absolute;
             width: 4px; height: 4px;
@@ -296,7 +269,6 @@
             100%{ opacity: 0;   transform: translate(var(--tx), var(--ty)) scale(0.2); }
         }
 
-        /* Starburst glare on tyre */
         .tyre-glare {
             position: absolute;
             top: 20px; left: 20px;
@@ -306,7 +278,6 @@
             pointer-events: none;
         }
 
-        /* fade-out class for splash */
         #splashScreen.fade-out {
             animation: splashFadeOut 0.7s cubic-bezier(0.4,0,0.2,1) both;
         }
@@ -453,39 +424,30 @@
         <div class="login-logo-ring"><i class="fas fa-circle-nodes"></i></div>
         <h2>Tyre Management</h2>
         <div class="login-sub">Fleet Intelligence Portal</div>
-        <div class="input-group">
-            <i class="fas fa-user-circle"></i>
-            <input type="text" id="loginUsername" placeholder="Username" autocomplete="off">
+
+        <div class="welcome-note">
+            <i class="fas fa-shield-halved"></i>
+            Welcome back! Click below to access your fleet dashboard instantly.
         </div>
-        <div class="input-group">
-            <i class="fas fa-lock"></i>
-            <input type="password" id="loginPassword" placeholder="Password">
-        </div>
+
         <button class="login-btn" id="doLoginBtn">
             <i class="fas fa-arrow-right-to-bracket"></i> ACCESS DASHBOARD
         </button>
-        <div id="loginErrorMsg" class="error-message" style="display:none;">⚠️ Invalid credentials. Use: admin / tyremark</div>
-        <div class="demo-hint"><i class="fas fa-key"></i> Demo: <strong>admin</strong> / <strong>tyremark</strong></div>
     </div>
 </div>
 
 <!-- ===== SPLASH SCREEN ===== -->
 <div id="splashScreen">
-    <!-- Road dashes -->
     <div class="road-dashes" id="roadDashes"></div>
 
-    <!-- Rolling tyre -->
     <div class="splash-tyre-wrap" id="splashTyreWrap">
         <div class="tyre-glare"></div>
         <svg class="tyre-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <!-- Outer tyre -->
             <circle cx="100" cy="100" r="94" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="2"/>
-            <!-- Tread blocks -->
             <g fill="none" stroke="#333" stroke-width="3.5">
                 <circle cx="100" cy="100" r="86"/>
                 <circle cx="100" cy="100" r="75"/>
             </g>
-            <!-- Tread lugs -->
             <g fill="#252525">
                 <rect x="92" y="4" width="16" height="28" rx="4" transform="rotate(0 100 100)"/>
                 <rect x="92" y="4" width="16" height="28" rx="4" transform="rotate(22.5 100 100)"/>
@@ -504,11 +466,8 @@
                 <rect x="92" y="4" width="16" height="28" rx="4" transform="rotate(315 100 100)"/>
                 <rect x="92" y="4" width="16" height="28" rx="4" transform="rotate(337.5 100 100)"/>
             </g>
-            <!-- Inner wall -->
             <circle cx="100" cy="100" r="73" fill="#111" stroke="#1e1e1e" stroke-width="1"/>
-            <!-- Rim outer -->
             <circle cx="100" cy="100" r="62" fill="url(#rimGrad)" stroke="#3a8fbf" stroke-width="1.5"/>
-            <!-- Rim spokes -->
             <g stroke="#5ab3e8" stroke-width="5" stroke-linecap="round" opacity="0.9">
                 <line x1="100" y1="40" x2="100" y2="62"/>
                 <line x1="100" y1="138" x2="100" y2="160"/>
@@ -519,10 +478,8 @@
                 <line x1="145" y1="55" x2="129" y2="71"/>
                 <line x1="71" y1="129" x2="55" y2="145"/>
             </g>
-            <!-- Hub -->
             <circle cx="100" cy="100" r="20" fill="#0d1e2b" stroke="#5ab3e8" stroke-width="2"/>
             <circle cx="100" cy="100" r="8" fill="#5ab3e8" opacity="0.9"/>
-            <!-- Wheel brand text arc -->
             <defs>
                 <linearGradient id="rimGrad" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0%" stop-color="#2a4a62"/>
@@ -536,16 +493,13 @@
         </svg>
     </div>
 
-    <!-- Particles -->
     <div id="particleContainer" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;"></div>
 
-    <!-- Text -->
     <div class="splash-text-block">
         <div class="splash-brand" id="splashBrand"></div>
         <div class="splash-tagline" id="splashTagline"></div>
     </div>
 
-    <!-- Loader -->
     <div class="splash-loader-wrap">
         <div class="loader-track"><div class="loader-fill" id="loaderFill"></div></div>
         <div class="loader-label" id="loaderLabel">LOADING FLEET DATA...</div>
@@ -708,17 +662,14 @@ function runSplash(afterDone){
     buildRoadDashes();
     buildParticles();
 
-    // Typewriter for brand text (delay 0.4s)
     setTimeout(()=>{
         typewriterEffect(document.getElementById('splashBrand'), 'TYRE FLEET', 60, ()=>{
             typewriterEffect(document.getElementById('splashTagline'), 'MANAGEMENT SYSTEM  ·  FLEET INTELLIGENCE', 30);
         });
     }, 400);
 
-    // Loader animation (starts after 0.5s)
     setTimeout(()=>{
         animateLoader(()=>{
-            // Fade out splash
             splash.classList.add('fade-out');
             setTimeout(()=>{
                 splash.style.display='none';
@@ -796,38 +747,24 @@ function initDashboardUI(){
     setInterval(updateDateBadge,60000);
 }
 
-// ===== LOGIN LOGIC =====
+// ===== LOGIN LOGIC — no credentials needed, single click =====
 const loginOverlay=document.getElementById('loginOverlay');
 const dashboardDiv=document.getElementById('mainDashboard');
 const reportFab=document.getElementById('openReportBtn');
 
 function performLogin(){
-    const u=document.getElementById('loginUsername').value.trim();
-    const p=document.getElementById('loginPassword').value.trim();
-    if(u==='admin'&&p==='tyremark'){
-        document.getElementById('loginErrorMsg').style.display='none';
-        // Fade login out
-        loginOverlay.classList.add('hidden');
-        setTimeout(()=>{
-            loginOverlay.style.display='none';
-            // Run splash then show dashboard
-            runSplash(()=>{
-                dashboardDiv.style.display='block';
-                reportFab.style.display='flex';
-                initDashboardUI();
-            });
-        }, 650);
-    } else {
-        const err=document.getElementById('loginErrorMsg');
-        err.style.display='block';
-        setTimeout(()=>{err.style.display='none';},2800);
-    }
+    loginOverlay.classList.add('hidden');
+    setTimeout(()=>{
+        loginOverlay.style.display='none';
+        runSplash(()=>{
+            dashboardDiv.style.display='block';
+            reportFab.style.display='flex';
+            initDashboardUI();
+        });
+    }, 650);
 }
 
-document.getElementById('doLoginBtn').addEventListener('click',performLogin);
-['loginUsername','loginPassword'].forEach(id=>{
-    document.getElementById(id).addEventListener('keypress',e=>{if(e.key==='Enter')performLogin();});
-});
+document.getElementById('doLoginBtn').addEventListener('click', performLogin);
 
 // Prevent flash
 dashboardDiv.style.display='none';
