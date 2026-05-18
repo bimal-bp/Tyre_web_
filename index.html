@@ -5,470 +5,452 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Tyre Management System | Fleet Dashboard + Login Portal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --ink: #0b1a22;
+            --tyre-dark: #111820;
+            --tyre-grey: #2a3540;
+            --steel: #3a8fbf;
+            --steel-light: #5ab3e8;
+            --rubber: #1c2b35;
+            --accent: #f0a500;
+            --warn: #e84040;
+            --white: #f4f8fc;
+            --card-bg: #ffffff;
+            --muted: #6b8ca4;
         }
 
         body {
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #eef2f9 0%, #e2e8f2 100%);
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #dde6ef 0%, #c8d8e8 100%);
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* --- ANIMATED LOGIN OVERLAY (full screen intro) --- */
+        /* ============================
+           LOGIN OVERLAY
+        ============================ */
         .login-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 10% 30%, #0b2b3b, #071a24);
-            backdrop-filter: blur(2px);
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(ellipse at 20% 40%, #0a1e2b 0%, #060e14 100%);
             z-index: 3000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1), visibility 0.6s;
-            visibility: visible;
-            opacity: 1;
-            font-family: 'Inter', sans-serif;
+            display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.7s ease, visibility 0.7s ease;
+            visibility: visible; opacity: 1;
         }
-        .login-overlay.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
+        .login-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+        /* tread pattern BG on login */
+        .login-overlay::before {
+            content: '';
+            position: absolute; inset: 0;
+            background-image: repeating-linear-gradient(
+                45deg,
+                transparent, transparent 20px,
+                rgba(255,255,255,0.018) 20px, rgba(255,255,255,0.018) 22px
+            ), repeating-linear-gradient(
+                -45deg,
+                transparent, transparent 20px,
+                rgba(255,255,255,0.018) 20px, rgba(255,255,255,0.018) 22px
+            );
         }
+
         .login-card {
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(16px);
-            border-radius: 56px;
-            width: 90%;
-            max-width: 460px;
-            padding: 40px 32px 48px;
+            background: rgba(15,30,42,0.92);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(90,179,232,0.18);
+            border-radius: 28px;
+            width: 90%; max-width: 420px;
+            padding: 44px 36px 48px;
             text-align: center;
-            box-shadow: 0 35px 68px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255,255,255,0.2);
-            transform: translateY(0);
-            animation: floatIn 0.5s ease-out;
-            transition: transform 0.2s;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(90,179,232,0.1);
+            animation: floatIn 0.55s cubic-bezier(0.22,0.9,0.4,1) both;
         }
         @keyframes floatIn {
-            0% { opacity: 0; transform: scale(0.96) translateY(30px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
+            from { opacity:0; transform: scale(0.93) translateY(28px); }
+            to   { opacity:1; transform: scale(1) translateY(0); }
         }
-        .login-icon {
-            font-size: 4rem;
-            background: linear-gradient(145deg, #1e5a8a, #0f3b57);
-            width: 100px;
-            height: 100px;
-            border-radius: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            color: white;
-            box-shadow: 0 12px 22px -8px rgba(0,0,0,0.3);
+
+        .login-logo-ring {
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            background:
+                linear-gradient(#0f1e2b,#0f1e2b) padding-box,
+                linear-gradient(135deg,#5ab3e8,#f0a500) border-box;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 22px;
+            font-size: 2.2rem;
+            color: var(--steel-light);
+            box-shadow: 0 0 28px rgba(90,179,232,0.35);
         }
+
         .login-card h2 {
-            font-size: 2rem;
-            font-weight: 800;
-            background: linear-gradient(125deg, #1c3f5c, #2b6a9e);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            margin-bottom: 12px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.4rem; letter-spacing: 2px;
+            background: linear-gradient(100deg, #5ab3e8, #f0a500);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            margin-bottom: 6px;
         }
         .login-sub {
-            color: #4a627a;
-            font-weight: 500;
-            margin-bottom: 32px;
-            font-size: 0.9rem;
-            border-bottom: 1px dashed #cbdbe0;
-            display: inline-block;
-            padding-bottom: 6px;
+            color: rgba(180,210,230,0.55); font-size: 0.78rem;
+            letter-spacing: 3px; text-transform: uppercase;
+            margin-bottom: 36px;
         }
-        .input-group {
-            text-align: left;
-            margin-bottom: 24px;
-            position: relative;
-        }
+        .input-group { text-align: left; margin-bottom: 18px; position: relative; }
         .input-group i {
-            position: absolute;
-            left: 18px;
-            top: 32px;
-            color: #7f8fa4;
-            font-size: 1.1rem;
+            position: absolute; left: 16px; top: 50%;
+            transform: translateY(-50%);
+            color: rgba(90,179,232,0.5); font-size: 0.95rem;
         }
         .input-group input {
             width: 100%;
-            padding: 14px 18px 14px 48px;
-            font-size: 1rem;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 48px;
-            background: #ffffff;
-            font-family: 'Inter', monospace;
-            transition: all 0.2s;
+            padding: 13px 16px 13px 44px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(90,179,232,0.2);
+            border-radius: 12px;
+            color: #e8f3fb;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
             outline: none;
-            font-weight: 500;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
+        .input-group input::placeholder { color: rgba(140,180,200,0.35); }
         .input-group input:focus {
-            border-color: #2c7cb6;
-            box-shadow: 0 0 0 3px rgba(44,124,182,0.2);
+            border-color: rgba(90,179,232,0.55);
+            box-shadow: 0 0 0 3px rgba(90,179,232,0.12);
         }
         .login-btn {
-            background: linear-gradient(95deg, #1f6392, #124e73);
-            border: none;
-            color: white;
-            font-weight: 700;
-            font-size: 1.1rem;
-            padding: 14px 20px;
-            border-radius: 60px;
             width: 100%;
+            padding: 14px;
+            background: linear-gradient(100deg, #1c6fa8, #0e4e7a);
+            border: 1px solid rgba(90,179,232,0.3);
+            border-radius: 12px;
+            color: white;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.25rem; letter-spacing: 2px;
             cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 12px;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            margin-top: 10px;
+            transition: all 0.22s;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
-        .login-btn:hover {
-            background: linear-gradient(95deg, #0f547c, #0a3f5e);
-            transform: scale(1.01);
-            box-shadow: 0 12px 22px rgba(0, 0, 0, 0.2);
-        }
+        .login-btn:hover { background: linear-gradient(100deg,#2280be,#1558a0); transform:translateY(-1px); }
         .error-message {
-            background: #fee9e6;
-            color: #bc1c2e;
-            border-radius: 60px;
-            padding: 8px 18px;
-            font-size: 0.8rem;
-            margin-top: 20px;
-            display: inline-block;
-            font-weight: 500;
+            background: rgba(232,64,64,0.12); color: #ff7070;
+            border: 1px solid rgba(232,64,64,0.25);
+            border-radius: 8px; padding: 8px 14px;
+            font-size: 0.8rem; margin-top: 16px;
         }
         .demo-hint {
-            margin-top: 28px;
-            background: #eef3fc;
-            padding: 12px;
-            border-radius: 40px;
-            font-size: 0.75rem;
-            color: #2c5282;
-            border: 1px solid #cbdde9;
+            margin-top: 24px;
+            border-top: 1px solid rgba(90,179,232,0.1);
+            padding-top: 18px;
+            font-size: 0.72rem; color: rgba(140,180,200,0.45);
+            letter-spacing: 1px;
         }
-        /* dashboard container (original style) */
-        .dashboard-container {
-            max-width: 1300px;
-            margin: 0 auto;
+        .demo-hint strong { color: rgba(90,179,232,0.7); }
+
+        /* ============================
+           SPLASH / INTRO ANIMATION SCREEN
+        ============================ */
+        #splashScreen {
+            position: fixed; inset: 0;
+            background: #070e14;
+            z-index: 2500;
+            display: none;
+            align-items: center; justify-content: center;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Road surface */
+        #splashScreen::before {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 38%;
+            background: linear-gradient(180deg, #0d1920 0%, #091218 100%);
+            border-top: 2px solid rgba(90,179,232,0.12);
+        }
+
+        /* Road dashes */
+        .road-dashes {
+            position: absolute;
+            bottom: 15%;
+            left: -100%;
+            width: 400%;
+            height: 4px;
+            display: flex; gap: 60px;
+            animation: dashMove 0.5s linear infinite;
+        }
+        @keyframes dashMove {
+            from { transform: translateX(0); }
+            to   { transform: translateX(80px); }
+        }
+        .road-dash { width: 60px; height: 100%; background: rgba(240,165,0,0.55); border-radius: 2px; flex-shrink:0; }
+
+        /* The big rolling tyre */
+        .splash-tyre-wrap {
             position: relative;
+            z-index: 10;
+            margin-bottom: 60px;
+        }
+        .tyre-svg {
+            width: 200px; height: 200px;
+            animation: tyreRoll 0.7s linear infinite;
+            filter: drop-shadow(0 24px 48px rgba(0,0,0,0.8)) drop-shadow(0 0 30px rgba(90,179,232,0.25));
+        }
+        @keyframes tyreRoll {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+
+        /* Tyre SVG enter animation */
+        .splash-tyre-wrap {
+            animation: tyreSlideIn 0.6s cubic-bezier(0.25,1.1,0.5,1) both;
+            animation-delay: 0.1s;
+        }
+        @keyframes tyreSlideIn {
+            from { opacity: 0; transform: translateX(-200px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Splash text */
+        .splash-text-block {
+            position: absolute;
+            bottom: 18%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 20;
+            animation: splashTextIn 0.5s ease both;
+            animation-delay: 0.35s;
+        }
+        @keyframes splashTextIn {
+            from { opacity:0; transform: translateX(-50%) translateY(20px); }
+            to   { opacity:1; transform: translateX(-50%) translateY(0); }
+        }
+        .splash-brand {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(2.8rem, 8vw, 5.5rem);
+            letter-spacing: 6px;
+            background: linear-gradient(100deg, #f4f8fc 30%, #5ab3e8 80%);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            line-height: 1;
+        }
+        .splash-tagline {
+            font-size: clamp(0.7rem, 2.5vw, 0.95rem);
+            letter-spacing: 5px; text-transform: uppercase;
+            color: rgba(180,210,230,0.5);
+            margin-top: 6px;
+        }
+
+        /* Loading bar */
+        .splash-loader-wrap {
+            position: absolute;
+            bottom: 9%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(360px, 80vw);
+            z-index: 20;
+            animation: fadeInUp 0.4s ease both;
+            animation-delay: 0.5s;
+        }
+        @keyframes fadeInUp { from{opacity:0;transform:translateX(-50%) translateY(10px);} to{opacity:1;transform:translateX(-50%) translateY(0);} }
+        .loader-track {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(90,179,232,0.15);
+            border-radius: 40px; height: 6px; overflow: hidden;
+        }
+        .loader-fill {
+            height: 100%; width: 0%;
+            background: linear-gradient(90deg, #1c6fa8, #5ab3e8, #f0a500);
+            border-radius: 40px;
+            transition: width 0.05s linear;
+            box-shadow: 0 0 12px rgba(90,179,232,0.6);
+        }
+        .loader-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem; letter-spacing: 2px;
+            color: rgba(90,179,232,0.5);
+            margin-top: 8px; text-align: right;
+        }
+
+        /* Sparks / dust particles */
+        .particle {
+            position: absolute;
+            width: 4px; height: 4px;
+            border-radius: 50%;
+            background: var(--steel-light);
+            pointer-events: none;
+            opacity: 0;
+            animation: particleFly var(--dur) ease-out var(--delay) infinite;
+        }
+        @keyframes particleFly {
+            0%  { opacity: 0.8; transform: translate(0,0) scale(1); }
+            100%{ opacity: 0;   transform: translate(var(--tx), var(--ty)) scale(0.2); }
+        }
+
+        /* Starburst glare on tyre */
+        .tyre-glare {
+            position: absolute;
+            top: 20px; left: 20px;
+            width: 40px; height: 40px;
+            background: radial-gradient(circle, rgba(255,255,255,0.35), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* fade-out class for splash */
+        #splashScreen.fade-out {
+            animation: splashFadeOut 0.7s cubic-bezier(0.4,0,0.2,1) both;
+        }
+        @keyframes splashFadeOut {
+            0%  { opacity:1; transform: scale(1); }
+            80% { opacity:0; transform: scale(1.04); }
+            100%{ opacity:0; transform: scale(1.04); display:none; }
+        }
+
+        /* ============================
+           DASHBOARD
+        ============================ */
+        .dashboard-container {
+            max-width: 1300px; margin: 0 auto;
             padding: 32px 24px;
+            animation: dashboardReveal 0.6s ease both;
+        }
+        @keyframes dashboardReveal {
+            from { opacity:0; transform: translateY(16px); }
+            to   { opacity:1; transform: translateY(0); }
         }
         .main-header {
             margin-bottom: 40px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: flex-end;
+            display: flex; flex-wrap: wrap;
+            justify-content: space-between; align-items: flex-end;
             gap: 20px;
-            border-bottom: 2px solid rgba(52, 152, 219, 0.2);
+            border-bottom: 2px solid rgba(52,152,219,0.2);
             padding-bottom: 20px;
         }
         .title-section h1 {
-            font-size: 2.2rem;
-            font-weight: 700;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.4rem; letter-spacing: 2px;
             background: linear-gradient(125deg, #1E2F3E, #2c5282);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            letter-spacing: -0.3px;
+            background-clip: text; -webkit-background-clip: text; color: transparent;
         }
-        .title-section p {
-            color: #4a627a;
-            font-weight: 500;
-            margin-top: 6px;
-            font-size: 0.95rem;
-        }
+        .title-section p { color: #4a627a; font-size: 0.95rem; margin-top: 4px; }
         .date-badge {
-            background: rgba(255,255,255,0.8);
-            backdrop-filter: blur(4px);
-            padding: 10px 18px;
-            border-radius: 60px;
-            font-weight: 500;
-            font-size: 0.85rem;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-            border: 1px solid rgba(52,152,219,0.3);
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(4px);
+            padding: 9px 18px; border-radius: 60px;
+            font-size: 0.82rem; font-weight: 600;
+            border: 1px solid rgba(52,152,219,0.25);
             color: #2c3e50;
         }
-        .insight-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 28px;
-            margin-bottom: 48px;
-        }
+        .insight-row { display:flex; flex-wrap:wrap; gap:28px; margin-bottom:48px; }
         .tipper-card {
-            flex: 1.5;
-            min-width: 300px;
-            background: white;
-            border-radius: 32px;
-            box-shadow: 0 16px 32px -14px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-            border: 1px solid #eef2f6;
+            flex: 1.5; min-width: 300px;
+            background: white; border-radius: 24px;
+            box-shadow: 0 16px 32px -14px rgba(0,0,0,0.08);
+            border: 1px solid #eef2f6; overflow: hidden;
         }
         .widget-header {
-            background: #f8fafd;
-            padding: 18px 24px;
+            background: #f8fafd; padding: 16px 22px;
             border-bottom: 1px solid #e9edf2;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            display: flex; align-items: center; gap: 10px;
         }
-        .widget-header i {
-            font-size: 1.6rem;
-            color: #e67e22;
-        }
-        .widget-header h3 {
-            font-weight: 700;
-            font-size: 1.25rem;
-            color: #2c3e50;
-        }
-        .tipper-list {
-            padding: 8px 0 12px 0;
-        }
+        .widget-header i { font-size: 1.4rem; color: #e67e22; }
+        .widget-header h3 { font-size: 1.1rem; font-weight: 700; color: #2c3e50; }
+        .tipper-list { padding: 8px 0 12px; }
         .tipper-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 22px;
             border-bottom: 1px solid #f0f3f8;
-            transition: background 0.15s;
         }
-        .tipper-name {
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-family: monospace;
-            font-size: 0.95rem;
-        }
-        .issue-badge {
-            background: #fee2e2;
-            color: #b91c1c;
-            padding: 5px 12px;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 0.85rem;
-        }
+        .tipper-name { font-weight: 700; display:flex; align-items:center; gap:10px; font-family:'JetBrains Mono',monospace; font-size:0.88rem; }
+        .issue-badge { background:#fee2e2; color:#b91c1c; padding:4px 12px; border-radius:40px; font-weight:700; font-size:0.82rem; }
         .view-all-link {
-            display: block;
-            text-align: center;
-            padding: 12px;
-            background: #fbfdff;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: #2c7cb6;
-            text-decoration: none;
-            border-top: 1px solid #eef2f8;
-            transition: 0.2s;
-            cursor: pointer;
+            display:block; text-align:center; padding:12px;
+            background:#fbfdff; font-size:0.82rem; font-weight:600; color:#2c7cb6;
+            text-decoration:none; border-top:1px solid #eef2f8; cursor:pointer;
         }
         .stock-summary {
-            flex: 1;
-            background: white;
-            border-radius: 32px;
-            box-shadow: 0 16px 32px -14px rgba(0, 0, 0, 0.08);
-            display: flex;
-            flex-direction: column;
-            border: 1px solid #eef2f6;
+            flex:1; background:white; border-radius:24px;
+            box-shadow:0 16px 32px -14px rgba(0,0,0,0.08);
+            display:flex; flex-direction:column; border:1px solid #eef2f6;
         }
-        .stock-header {
-            background: #f8fafd;
-            padding: 18px 24px;
-            border-bottom: 1px solid #e9edf2;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .stock-header i {
-            font-size: 1.5rem;
-            color: #27ae60;
-        }
-        .stock-details {
-            padding: 18px 24px;
-            flex: 1;
-        }
-        .stock-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 18px;
-            font-weight: 500;
-        }
-        .progress-bar-bg {
-            background: #e9ecef;
-            border-radius: 40px;
-            height: 8px;
-            width: 100%;
-            margin: 12px 0 8px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            background: #2c7cb6;
-            height: 8px;
-            border-radius: 40px;
-        }
-        .inspection-status {
-            background: #f8f9fc;
-            border-radius: 20px;
-            padding: 16px;
-            margin-top: 20px;
-            border-left: 4px solid #3498db;
-        }
-        .status-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-top: 8px;
-        }
-        .boxes-container {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 28px;
-            margin: 48px 0 32px;
-        }
+        .stock-header { background:#f8fafd; padding:16px 22px; border-bottom:1px solid #e9edf2; display:flex; align-items:center; gap:10px; }
+        .stock-header i { font-size:1.4rem; color:#27ae60; }
+        .stock-header h3 { font-size:1.1rem; font-weight:700; color:#2c3e50; }
+        .stock-details { padding:18px 22px; flex:1; }
+        .stock-row { display:flex; justify-content:space-between; margin-bottom:16px; font-weight:600; font-size:0.9rem; }
+        .progress-bar-bg { background:#e9ecef; border-radius:40px; height:8px; width:100%; margin:10px 0 6px; overflow:hidden; }
+        .progress-fill { background:#2c7cb6; height:8px; border-radius:40px; }
+        .inspection-status { background:#f8f9fc; border-radius:16px; padding:14px; margin-top:18px; border-left:4px solid #3498db; }
+        .status-badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:0.72rem; font-weight:700; margin-top:4px; }
+        .good-status { background:#dcfce7; color:#166534; }
+        .normal-status { background:#fef9c3; color:#854d0e; }
+        .poor-status { background:#fee2e2; color:#991b1b; }
+        .boxes-container { display:flex; justify-content:center; flex-wrap:wrap; gap:24px; margin:40px 0 28px; }
         .box {
-            width: 270px;
-            background: white;
-            border-radius: 28px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 28px 20px;
-            box-shadow: 0 16px 28px -12px rgba(0, 0, 0, 0.08);
-            transition: all 0.25s ease;
-            text-decoration: none;
-            color: inherit;
-            border: 1px solid rgba(0,0,0,0.04);
+            width:260px; background:white; border-radius:24px;
+            display:flex; flex-direction:column; align-items:center;
+            padding:26px 18px;
+            box-shadow:0 16px 28px -12px rgba(0,0,0,0.08);
+            transition:all 0.25s ease; text-decoration:none; color:inherit;
+            border:1px solid rgba(0,0,0,0.04);
         }
-        .box:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 24px 36px -14px rgba(0, 0, 0, 0.18);
-            border-color: #cde3f0;
-        }
+        .box:hover { transform:translateY(-6px); box-shadow:0 24px 36px -14px rgba(0,0,0,0.18); border-color:#cde3f0; }
         .box-icon {
-            font-size: 2.8rem;
-            margin-bottom: 20px;
-            background: #eff7ff;
-            width: 80px;
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            color: #2c7cb6;
+            font-size:2.5rem; margin-bottom:16px;
+            background:#eff7ff; width:76px; height:76px;
+            display:flex; align-items:center; justify-content:center;
+            border-radius:50%; color:#2c7cb6;
         }
+        .box-title { font-family:'Bebas Neue',sans-serif; font-size:1.25rem; letter-spacing:1px; color:#1e2f3e; }
+        .box-desc { font-size:0.8rem; color:#6b8ca4; margin-top:4px; text-align:center; }
         .report-fab-large {
-            position: fixed;
-            bottom: 32px;
-            right: 32px;
-            background: linear-gradient(135deg, #2c7cb6, #1e5a8a);
-            padding: 14px 28px;
-            border-radius: 60px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-            cursor: pointer;
-            transition: all 0.25s ease;
-            z-index: 1000;
-            border: none;
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 600;
+            position:fixed; bottom:28px; right:28px;
+            background:linear-gradient(135deg, #2c7cb6, #1e5a8a);
+            padding:13px 26px; border-radius:60px;
+            display:flex; align-items:center; gap:10px;
+            box-shadow:0 8px 20px rgba(0,0,0,0.25);
+            cursor:pointer; z-index:1000; border:none; color:white;
+            font-family:'Bebas Neue',sans-serif; font-size:1.1rem; letter-spacing:1.5px;
         }
-        /* Modal styles */
         .report-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(5px);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
+            display:none; position:fixed; inset:0;
+            background:rgba(0,0,0,0.6); backdrop-filter:blur(5px);
+            z-index:2000; justify-content:center; align-items:center;
         }
         .modal-content {
-            background: white;
-            border-radius: 32px;
-            width: 90%;
-            max-width: 1100px;
-            max-height: 85vh;
-            overflow-y: auto;
+            background:white; border-radius:28px; width:90%;
+            max-width:1100px; max-height:85vh; overflow-y:auto;
         }
         .modal-header {
-            background: #1e2f3e;
-            color: white;
-            padding: 20px 28px;
-            border-radius: 32px 32px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background:#1e2f3e; color:white; padding:18px 26px;
+            border-radius:28px 28px 0 0; display:flex; justify-content:space-between; align-items:center;
         }
         .close-modal {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            font-size: 1.8rem;
-            cursor: pointer;
-            width: 44px;
-            height: 44px;
-            border-radius: 30px;
+            background:rgba(255,255,255,0.15); border:none; color:white;
+            font-size:1.6rem; cursor:pointer; width:42px; height:42px; border-radius:50%;
         }
-        .report-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .report-table th, .report-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #e9edf2;
-        }
-        .badge-position {
-            background: #eef2fa;
-            padding: 4px 10px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.75rem;
-        }
-        footer {
-            text-align: center;
-            padding: 30px 20px 10px;
-            font-size: 0.8rem;
-            color: #6f8dab;
-        }
-        @media (max-width: 760px) {
-            .dashboard-container { padding: 20px 16px; }
-            .login-card { padding: 32px 20px; }
-        }
+        .report-table { width:100%; border-collapse:collapse; }
+        .report-table th, .report-table td { padding:11px 12px; text-align:left; border-bottom:1px solid #e9edf2; font-size:0.88rem; }
+        .badge-position { background:#eef2fa; padding:3px 9px; border-radius:50px; font-weight:700; font-size:0.72rem; }
+        footer { text-align:center; padding:28px 20px 10px; font-size:0.78rem; color:#6f8dab; }
+        @media(max-width:760px){ .dashboard-container{padding:18px 14px;} .login-card{padding:32px 22px;} }
     </style>
 </head>
 <body>
 
-<!-- animated login overlay (home login screen) -->
+<!-- ===== LOGIN ===== -->
 <div class="login-overlay" id="loginOverlay">
     <div class="login-card">
-        <div class="login-icon">
-            <i class="fas fa-charging-station"></i>
-        </div>
+        <div class="login-logo-ring"><i class="fas fa-circle-nodes"></i></div>
         <h2>Tyre Management</h2>
         <div class="login-sub">Fleet Intelligence Portal</div>
         <div class="input-group">
@@ -480,84 +462,139 @@
             <input type="password" id="loginPassword" placeholder="Password">
         </div>
         <button class="login-btn" id="doLoginBtn">
-            <i class="fas fa-arrow-right-to-bracket"></i> Access Dashboard
+            <i class="fas fa-arrow-right-to-bracket"></i> ACCESS DASHBOARD
         </button>
-        <div id="loginErrorMsg" class="error-message" style="display: none;">⚠️ Invalid credentials. Use: admin / tyremark</div>
-        <div class="demo-hint">
-            <i class="fas fa-key"></i> Demo: <strong>admin</strong> / <strong>tyremark</strong><br>
-            * Animated secure entry*
-        </div>
+        <div id="loginErrorMsg" class="error-message" style="display:none;">⚠️ Invalid credentials. Use: admin / tyremark</div>
+        <div class="demo-hint"><i class="fas fa-key"></i> Demo: <strong>admin</strong> / <strong>tyremark</strong></div>
     </div>
 </div>
 
-<!-- Main dashboard (initially hidden until login) -->
-<div class="dashboard-container" id="mainDashboard" style="display: none;">
-    <div class="main-header">
-        <div class="title-section">
-            <h1><i class="fas fa-tachometer-alt" style="color: #2c7cb6; margin-right: 12px;"></i>Tyre Management System</h1>
-            <p>Fleet intelligence · Real-time tyre tracking</p>
-        </div>
-        <div class="date-badge" id="liveDate">
-            <i class="far fa-calendar-alt"></i> 
-            <span id="currentDateText">Loading...</span>
-        </div>
+<!-- ===== SPLASH SCREEN ===== -->
+<div id="splashScreen">
+    <!-- Road dashes -->
+    <div class="road-dashes" id="roadDashes"></div>
+
+    <!-- Rolling tyre -->
+    <div class="splash-tyre-wrap" id="splashTyreWrap">
+        <div class="tyre-glare"></div>
+        <svg class="tyre-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <!-- Outer tyre -->
+            <circle cx="100" cy="100" r="94" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="2"/>
+            <!-- Tread blocks -->
+            <g fill="none" stroke="#333" stroke-width="3.5">
+                <circle cx="100" cy="100" r="86"/>
+                <circle cx="100" cy="100" r="75"/>
+            </g>
+            <!-- Tread lugs -->
+            <g fill="#252525">
+                <rect x="92" y="4" width="16" height="28" rx="4" transform="rotate(0 100 100)"/>
+                <rect x="92" y="4" width="16" height="28" rx="4" transform="rotate(22.5 100 100)"/>
+                <rect x="92" y="4" width="16" height="28" rx="4" transform="rotate(45 100 100)"/>
+                <rect x="92" y="4" width="16" height="28" rx="4" transform="rotate(67.5 100 100)"/>
+                <rect x="92" y="4" width="16" height="28" rx="4" transform="rotate(90 100 100)"/>
+                <rect x="92" y="4" width="16" height="28" rx="4" transform="rotate(112.5 100 100)"/>
+                <rect x="92" y="4" width="16" height="28" rx="4" transform="rotate(135 100 100)"/>
+                <rect x="92" y="4" width="16" height="28" rx="4" transform="rotate(157.5 100 100)"/>
+                <rect x="92" y="4" width="16" height="28" rx="4" transform="rotate(180 100 100)"/>
+                <rect x="92" y="4" width="16" height="28" rx="4" transform="rotate(202.5 100 100)"/>
+                <rect x="92" y="4" width="16" height="28" rx="4" transform="rotate(225 100 100)"/>
+                <rect x="92" y="4" width="16" height="28" rx="4" transform="rotate(247.5 100 100)"/>
+                <rect x="92" y="4" width="16" height="28" rx="4" transform="rotate(270 100 100)"/>
+                <rect x="92" y="4" width="16" height="28" rx="4" transform="rotate(292.5 100 100)"/>
+                <rect x="92" y="4" width="16" height="28" rx="4" transform="rotate(315 100 100)"/>
+                <rect x="92" y="4" width="16" height="28" rx="4" transform="rotate(337.5 100 100)"/>
+            </g>
+            <!-- Inner wall -->
+            <circle cx="100" cy="100" r="73" fill="#111" stroke="#1e1e1e" stroke-width="1"/>
+            <!-- Rim outer -->
+            <circle cx="100" cy="100" r="62" fill="url(#rimGrad)" stroke="#3a8fbf" stroke-width="1.5"/>
+            <!-- Rim spokes -->
+            <g stroke="#5ab3e8" stroke-width="5" stroke-linecap="round" opacity="0.9">
+                <line x1="100" y1="40" x2="100" y2="62"/>
+                <line x1="100" y1="138" x2="100" y2="160"/>
+                <line x1="40" y1="100" x2="62" y2="100"/>
+                <line x1="138" y1="100" x2="160" y2="100"/>
+                <line x1="55" y1="55" x2="71" y2="71"/>
+                <line x1="129" y1="129" x2="145" y2="145"/>
+                <line x1="145" y1="55" x2="129" y2="71"/>
+                <line x1="71" y1="129" x2="55" y2="145"/>
+            </g>
+            <!-- Hub -->
+            <circle cx="100" cy="100" r="20" fill="#0d1e2b" stroke="#5ab3e8" stroke-width="2"/>
+            <circle cx="100" cy="100" r="8" fill="#5ab3e8" opacity="0.9"/>
+            <!-- Wheel brand text arc -->
+            <defs>
+                <linearGradient id="rimGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#2a4a62"/>
+                    <stop offset="100%" stop-color="#1a3048"/>
+                </linearGradient>
+                <path id="brandArc" d="M 38,100 A 62,62 0 0 1 162,100"/>
+            </defs>
+            <text font-family="'Bebas Neue', sans-serif" font-size="10" fill="rgba(90,179,232,0.6)" letter-spacing="4">
+                <textPath href="#brandArc" startOffset="8%">FLEET TYRE MANAGEMENT</textPath>
+            </text>
+        </svg>
     </div>
 
-    <!-- Insight row -->
+    <!-- Particles -->
+    <div id="particleContainer" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;"></div>
+
+    <!-- Text -->
+    <div class="splash-text-block">
+        <div class="splash-brand" id="splashBrand"></div>
+        <div class="splash-tagline" id="splashTagline"></div>
+    </div>
+
+    <!-- Loader -->
+    <div class="splash-loader-wrap">
+        <div class="loader-track"><div class="loader-fill" id="loaderFill"></div></div>
+        <div class="loader-label" id="loaderLabel">LOADING FLEET DATA...</div>
+    </div>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div class="dashboard-container" id="mainDashboard" style="display:none;">
+    <div class="main-header">
+        <div class="title-section">
+            <h1><i class="fas fa-tachometer-alt" style="color:#2c7cb6;margin-right:10px;"></i>Tyre Management System</h1>
+            <p>Fleet intelligence · Real-time tyre tracking</p>
+        </div>
+        <div class="date-badge"><i class="far fa-calendar-alt"></i> <span id="currentDateText">Loading...</span></div>
+    </div>
     <div class="insight-row">
         <div class="tipper-card">
             <div class="widget-header">
                 <i class="fas fa-dumpster"></i>
                 <h3>📊 Tyres Issued · Tipper Wise</h3>
-                <span id="monthLabel">This Month</span>
+                <span id="monthLabel" style="margin-left:auto;font-size:0.78rem;color:#6b8ca4;"></span>
             </div>
             <div class="tipper-list" id="tipperListContainer"></div>
-            <div class="view-all-link" id="viewAllTipperLink">
-                <i class="fas fa-chart-line"></i> View all tipper analytics →
-            </div>
+            <div class="view-all-link" id="viewAllTipperLink"><i class="fas fa-chart-line"></i> View all tipper analytics →</div>
         </div>
         <div class="stock-summary">
-            <div class="stock-header">
-                <i class="fas fa-warehouse"></i>
-                <h3>📦 Tyre Stock & Inspection</h3>
-            </div>
+            <div class="stock-header"><i class="fas fa-warehouse"></i><h3>📦 Tyre Stock & Inspection</h3></div>
             <div class="stock-details" id="stockDetailsPanel"></div>
         </div>
     </div>
-
-    <!-- Service Boxes - UPDATED LINK: Tyre Full Web (corrected) -->
     <div class="boxes-container">
         <a href="https://willpackprasanta.github.io/new-tyre-entry/" class="box" target="_blank">
             <div class="box-icon"><i class="fas fa-plus-circle"></i></div>
-            <div class="box-content">
-                <h3 class="box-title">New Tyre Entry</h3>
-                <p class="box-desc">Add tyres, batch & serial tracking</p>
-            </div>
+            <div><div class="box-title">New Tyre Entry</div><div class="box-desc">Add tyres, batch & serial tracking</div></div>
         </a>
-        <!-- FIXED: correct Tyre Full Web link -->
-        <a href="https://bimal-bp.github.io/new-tyre-web/" class="box" target="_blank" id="tyreFullWebLink">
+        <a href="https://bimal-bp.github.io/new-tyre-web/" class="box" target="_blank">
             <div class="box-icon"><i class="fas fa-chalkboard-user"></i></div>
-            <div class="box-content">
-                <h3 class="box-title">Tyre Full Web</h3>
-                <p class="box-desc">Complete lifecycle dashboard</p>
-            </div>
+            <div><div class="box-title">Tyre Full Web</div><div class="box-desc">Complete lifecycle dashboard</div></div>
         </a>
         <a href="https://willpackprasanta.github.io/Tyre_Inspect/" class="box" target="_blank">
             <div class="box-icon"><i class="fas fa-clipboard-list"></i></div>
-            <div class="box-content">
-                <h3 class="box-title">Tyre Inspect</h3>
-                <p class="box-desc">Inspections, wear analysis & reports</p>
-            </div>
+            <div><div class="box-title">Tyre Inspect</div><div class="box-desc">Inspections, wear analysis & reports</div></div>
         </a>
     </div>
-    <footer>
-        <p><i class="fas fa-charging-station"></i> Tyre Management Intelligence · Real-time fleet data &nbsp;|&nbsp; © 2025</p>
-    </footer>
+    <footer><p><i class="fas fa-circle-nodes"></i> Tyre Management Intelligence · Real-time fleet data &nbsp;|&nbsp; © 2025</p></footer>
 </div>
 
-<!-- Report Button & Modal -->
-<button class="report-fab-large" id="openReportBtn" style="display: none;">
-    <i class="fas fa-file-alt"></i> <span>📋 Tyre Report</span>
+<button class="report-fab-large" id="openReportBtn" style="display:none;">
+    <i class="fas fa-file-alt"></i> TYRE REPORT
 </button>
 <div id="tyreReportModal" class="report-modal">
     <div class="modal-content">
@@ -565,192 +602,236 @@
             <h2><i class="fas fa-clipboard-list"></i> Tyre Deployment Report</h2>
             <button class="close-modal" id="closeModalBtn">&times;</button>
         </div>
-        <div class="report-table-wrapper" style="padding: 20px; overflow-x:auto;">
+        <div style="padding:20px;overflow-x:auto;">
             <table class="report-table">
-                <thead>
-                    <tr><th>S.No</th><th>Tyre Number</th><th>Allocated Tipper</th><th>Date Fitted</th><th>KMR (km)</th><th>HMR (hrs)</th><th>Position</th></tr>
-                </thead>
+                <thead><tr><th>S.No</th><th>Tyre Number</th><th>Allocated Tipper</th><th>Date Fitted</th><th>KMR (km)</th><th>HMR (hrs)</th><th>Position</th></tr></thead>
                 <tbody id="reportTableBody"></tbody>
             </table>
         </div>
-        <div class="footer-note" style="padding: 12px 24px; background:#f9fafc; border-top:1px solid #e2e8f0;">
-            <i class="fas fa-info-circle"></i> Report generated: Latest tyre allocation · Positions randomized (FLO, CRO, FL, FR, BLO, etc)
+        <div style="padding:12px 22px;background:#f9fafc;border-top:1px solid #e2e8f0;font-size:0.8rem;color:#6b8ca4;">
+            <i class="fas fa-info-circle"></i> Report generated: Latest tyre allocation
         </div>
     </div>
 </div>
 
 <script>
-    // ========== FLEET DATA ==========
-    const tipperNumbers = [
-        "AP39UQ0095", "AP39UQ0097", "AP39UW9880", "AP39UW9881",
-        "AP39UY4651", "AP39UY4652", "AP39WC0926", "AP39WC0927",
-        "AP39WC0928", "AP39WF2052", "AP39WF2057", "AP39WF2058"
-    ];
-    
-    let tyresInStock = 7;
-    let tyresPurchasedThisMonth = 28;
-    let tyresUsedThisMonth = 21;
-    const totalTyresInspected = 120;
-    const goodTyres = 70;
-    const normalTyres = 35;
-    const notGoodTyres = totalTyresInspected - goodTyres - normalTyres;
-    
-    const tipperIssuanceData = [
-        { tipperId: "AP39UQ0095", tyresIssued: 3 },
-        { tipperId: "AP39UQ0097", tyresIssued: 4 },
-        { tipperId: "AP39UW9880", tyresIssued: 2 },
-        { tipperId: "AP39UW9881", tyresIssued: 3 },
-        { tipperId: "AP39UY4651", tyresIssued: 4 },
-        { tipperId: "AP39UY4652", tyresIssued: 2 },
-        { tipperId: "AP39WC0926", tyresIssued: 3 }
-    ];
-    
-    // Tyre Report items (with random positions)
-    const positionOptions = ["FLO", "CRO", "FL", "FR", "BLO", "BRI", "Spare"];
-    function getRandomPosition() { return positionOptions[Math.floor(Math.random() * positionOptions.length)]; }
-    
-    const baseTyreItems = [
-        { tyreNo: "T0202475225", tipper: "AP39UQ0095", dateFitted: "2025-02-10", kmr: 12450, hmr: 342 },
-        { tyreNo: "T3062905225", tipper: "AP39UQ0097", dateFitted: "2025-02-12", kmr: 9870, hmr: 278 },
-        { tyreNo: "T0102645225", tipper: "AP39UW9880", dateFitted: "2025-02-05", kmr: 15230, hmr: 415 },
-        { tyreNo: "T0445180126", tipper: "AP39UW9881", dateFitted: "2025-02-18", kmr: 7630, hmr: 210 },
-        { tyreNo: "T0103895225", tipper: "AP39UY4651", dateFitted: "2025-02-01", kmr: 18340, hmr: 512 },
-        { tyreNo: "T0227955225", tipper: "AP39UY4652", dateFitted: "2025-02-22", kmr: 5420, hmr: 148 },
-        { tyreNo: "T0102875225", tipper: "AP39WC0926", dateFitted: "2025-02-14", kmr: 11200, hmr: 305 },
-        { tyreNo: "T3048455225", tipper: "AP39WC0927", dateFitted: "2025-02-09", kmr: 13120, hmr: 365 },
-        { tyreNo: "T0206255225", tipper: "AP39WC0928", dateFitted: "2025-02-20", kmr: 6890, hmr: 189 },
-        { tyreNo: "T0224575225", tipper: "AP39WF2052", dateFitted: "2025-02-25", kmr: 3240, hmr: 92 }
-    ];
-    
-    let tyreReportItems = baseTyreItems.map(item => ({ ...item, position: getRandomPosition() }));
-    
-    function formatDate(dateStr) { return new Date(dateStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
-    function populateReportTable() {
-        const tbody = document.getElementById('reportTableBody');
-        if(!tbody) return;
-        let html = '';
-        tyreReportItems.forEach((item, idx) => {
-            html += `<tr>
-                <td>${idx+1}</td>
-                <td><strong>${item.tyreNo}</strong></td>
-                <td><i class="fas fa-truck"></i> ${item.tipper}</td>
-                <td>${formatDate(item.dateFitted)}</td>
-                <td>${item.kmr.toLocaleString()} km</td>
-                <td>${item.hmr} hrs</td>
-                <td><span class="badge-position">${item.position}</span></td>
-            </tr>`;
-        });
-        tbody.innerHTML = html;
+// ===== DATA =====
+const tipperNumbers = ["AP39UQ0095","AP39UQ0097","AP39UW9880","AP39UW9881","AP39UY4651","AP39UY4652","AP39WC0926","AP39WC0927","AP39WC0928","AP39WF2052","AP39WF2057","AP39WF2058"];
+const tipperIssuanceData = [
+    {tipperId:"AP39UQ0095",tyresIssued:3},{tipperId:"AP39UQ0097",tyresIssued:4},
+    {tipperId:"AP39UW9880",tyresIssued:2},{tipperId:"AP39UW9881",tyresIssued:3},
+    {tipperId:"AP39UY4651",tyresIssued:4},{tipperId:"AP39UY4652",tyresIssued:2},
+    {tipperId:"AP39WC0926",tyresIssued:3}
+];
+const tyresInStock=7, tyresPurchasedThisMonth=28, tyresUsedThisMonth=21;
+const goodTyres=70, normalTyres=35, notGoodTyres=15;
+const positionOptions=["FLO","CRO","FL","FR","BLO","BRI","Spare"];
+const baseTyreItems=[
+    {tyreNo:"T0202475225",tipper:"AP39UQ0095",dateFitted:"2025-02-10",kmr:12450,hmr:342},
+    {tyreNo:"T3062905225",tipper:"AP39UQ0097",dateFitted:"2025-02-12",kmr:9870,hmr:278},
+    {tyreNo:"T0102645225",tipper:"AP39UW9880",dateFitted:"2025-02-05",kmr:15230,hmr:415},
+    {tyreNo:"T0445180126",tipper:"AP39UW9881",dateFitted:"2025-02-18",kmr:7630,hmr:210},
+    {tyreNo:"T0103895225",tipper:"AP39UY4651",dateFitted:"2025-02-01",kmr:18340,hmr:512},
+    {tyreNo:"T0227955225",tipper:"AP39UY4652",dateFitted:"2025-02-22",kmr:5420,hmr:148},
+    {tyreNo:"T0102875225",tipper:"AP39WC0926",dateFitted:"2025-02-14",kmr:11200,hmr:305},
+    {tyreNo:"T3048455225",tipper:"AP39WC0927",dateFitted:"2025-02-09",kmr:13120,hmr:365},
+    {tyreNo:"T0206255225",tipper:"AP39WC0928",dateFitted:"2025-02-20",kmr:6890,hmr:189},
+    {tyreNo:"T0224575225",tipper:"AP39WF2052",dateFitted:"2025-02-25",kmr:3240,hmr:92}
+];
+const tyreReportItems = baseTyreItems.map(i=>({...i, position:positionOptions[Math.floor(Math.random()*positionOptions.length)]}));
+
+// ===== SPLASH ANIMATION =====
+function buildRoadDashes(){
+    const container = document.getElementById('roadDashes');
+    for(let i=0;i<60;i++){
+        const d=document.createElement('div');
+        d.className='road-dash';
+        container.appendChild(d);
     }
-    
-    // Dashboard rendering functions
-    function updateDateBadge() {
-        const now = new Date();
-        document.getElementById('currentDateText').innerText = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        const monthSpan = document.querySelector('#monthLabel');
-        if(monthSpan) monthSpan.innerText = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
-    }
-    
-    function renderTipperList() {
-        const container = document.getElementById('tipperListContainer');
-        if(!container) return;
-        let html = '';
-        tipperIssuanceData.forEach(tip => {
-            html += `<div class="tipper-item">
-                        <div class="tipper-name"><i class="fas fa-truck"></i> <strong>${tip.tipperId}</strong></div>
-                        <div class="issue-badge"><i class="fas fa-tyre"></i> ${tip.tyresIssued} tyres</div>
-                    </div>`;
-        });
-        html += `<div style="padding: 12px 24px 8px; font-size:0.75rem; color:#6a8aae; text-align:center; border-top: 1px solid #f0f3f8;">
-                    <i class="fas fa-info-circle"></i> + ${tipperNumbers.length - tipperIssuanceData.length} more tippers active
-                </div>`;
-        container.innerHTML = html;
-    }
-    
-    function renderStockAndInspection() {
-        const stockPanel = document.getElementById('stockDetailsPanel');
-        const stockPercentage = Math.min(Math.round((tyresInStock / 150) * 100), 100);
-        const reorderNeeded = tyresInStock < 50;
-        let reorderAlert = reorderNeeded ? `<div style="background: #fff6e5; border-radius: 16px; padding: 10px; margin-top: 12px;"><i class="fas fa-exclamation-triangle" style="color:#e67e22;"></i> <strong>Low stock alert:</strong> Only ${tyresInStock} tyres remaining. Reorder recommended.</div>` : `<div style="background: #e8f5e9; border-radius: 16px; padding: 10px; margin-top: 12px;"><i class="fas fa-check-circle" style="color:#27ae60;"></i> Stock level adequate.</div>`;
-        stockPanel.innerHTML = `
-            <div class="stock-row"><span class="stock-label"><i class="fas fa-tire"></i> Current Stock</span><span class="stock-value">${tyresInStock} tyres</span></div>
-            <div class="stock-row"><span class="stock-label">Monthly Purchase</span><span class="stock-value">${tyresPurchasedThisMonth} tyres</span></div>
-            <div class="stock-row"><span class="stock-label">Monthly Usage</span><span class="stock-value">${tyresUsedThisMonth} tyres</span></div>
-            <div class="progress-bar-bg"><div class="progress-fill" style="width: ${stockPercentage}%;"></div></div>
-            <div style="font-size:0.7rem; margin-bottom:16px;">Stock capacity: ${stockPercentage}%</div>
-            <div class="inspection-status"><strong><i class="fas fa-clipboard-check"></i> Tyre Inspection Report</strong>
-                <div style="margin-top:12px;"><div>✅ Good Condition: <span class="status-badge good-status">${goodTyres} tyres</span></div>
-                <div>⚠️ Normal: <span class="status-badge normal-status">${normalTyres} tyres</span></div>
-                <div>❌ Replace: <span class="status-badge poor-status">${notGoodTyres} tyres</span></div></div>
-                <div style="margin-top:12px; font-size:0.75rem;">⚙️ Tyre Avg Life: 4652 KM</div>
-            </div>${reorderAlert}
+}
+
+function buildParticles(){
+    const container = document.getElementById('particleContainer');
+    const colors = ['#5ab3e8','#f0a500','#fff','#3a8fbf'];
+    for(let i=0;i<32;i++){
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const angle = Math.random() * 360;
+        const dist = 60 + Math.random()*120;
+        const tx = Math.cos(angle*Math.PI/180)*dist + 'px';
+        const ty = (Math.sin(angle*Math.PI/180)*dist - 40) + 'px';
+        p.style.cssText = `
+            left:${35+Math.random()*30}%;
+            top:${30+Math.random()*15}%;
+            background:${colors[Math.floor(Math.random()*colors.length)]};
+            width:${2+Math.random()*5}px;
+            height:${2+Math.random()*5}px;
+            --tx:${tx};--ty:${ty};
+            --dur:${0.8+Math.random()*1.2}s;
+            --delay:${Math.random()*1.5}s;
         `;
+        container.appendChild(p);
     }
-    
-    function showAllTippers() {
-        const allTipperData = tipperNumbers.map((tipper, idx) => {
-            let issued = idx < 4 ? 4 : (idx < 8 ? 3 : 2);
-            return { tipperId: tipper, tyresIssued: issued };
+}
+
+function typewriterEffect(el, text, speed, callback){
+    let i=0; el.textContent='';
+    const iv = setInterval(()=>{
+        el.textContent += text[i++];
+        if(i>=text.length){ clearInterval(iv); if(callback) callback(); }
+    }, speed);
+}
+
+function animateLoader(callback){
+    const fill = document.getElementById('loaderFill');
+    const label = document.getElementById('loaderLabel');
+    const steps = [
+        {pct:20, text:'LOADING FLEET DATA...'},
+        {pct:45, text:'SYNCING TYRE RECORDS...'},
+        {pct:68, text:'READING INSPECTION LOGS...'},
+        {pct:88, text:'BUILDING DASHBOARD...'},
+        {pct:100,text:'READY ✓'},
+    ];
+    let s=0;
+    const iv = setInterval(()=>{
+        if(s>=steps.length){ clearInterval(iv); setTimeout(callback,350); return; }
+        fill.style.transition='width 0.45s cubic-bezier(0.4,0,0.2,1)';
+        fill.style.width=steps[s].pct+'%';
+        label.textContent=steps[s].text;
+        s++;
+    }, 480);
+}
+
+function runSplash(afterDone){
+    const splash = document.getElementById('splashScreen');
+    splash.style.display='flex';
+    buildRoadDashes();
+    buildParticles();
+
+    // Typewriter for brand text (delay 0.4s)
+    setTimeout(()=>{
+        typewriterEffect(document.getElementById('splashBrand'), 'TYRE FLEET', 60, ()=>{
+            typewriterEffect(document.getElementById('splashTagline'), 'MANAGEMENT SYSTEM  ·  FLEET INTELLIGENCE', 30);
         });
-        let message = "📋 COMPLETE TIPPER REPORT\n" + "=".repeat(40) + "\n";
-        allTipperData.forEach(t => { message += `${t.tipperId} : ${t.tyresIssued} tyres\n`; });
-        message += `\nTotal used this month: ${tyresUsedThisMonth}\nAvg per tipper: ${(tyresUsedThisMonth/tipperNumbers.length).toFixed(1)}`;
-        alert(message);
-    }
-    
-    function initDashboardUI() {
-        updateDateBadge();
-        renderTipperList();
-        renderStockAndInspection();
-        document.getElementById('viewAllTipperLink')?.addEventListener('click', (e) => { e.preventDefault(); showAllTippers(); });
-        const openBtn = document.getElementById('openReportBtn');
-        const modal = document.getElementById('tyreReportModal');
-        const closeBtn = document.getElementById('closeModalBtn');
-        if(openBtn) openBtn.onclick = () => { populateReportTable(); modal.style.display = 'flex'; document.body.style.overflow = 'hidden'; };
-        if(closeBtn) closeBtn.onclick = () => { modal.style.display = 'none'; document.body.style.overflow = 'auto'; };
-        window.onclick = (e) => { if(e.target === modal) { modal.style.display = 'none'; document.body.style.overflow = 'auto'; } };
-    }
-    
-    // ========== LOGIC FOR LOGIN + ANIMATION ==========
-    const loginOverlay = document.getElementById('loginOverlay');
-    const dashboardDiv = document.getElementById('mainDashboard');
-    const reportFab = document.getElementById('openReportBtn');
-    const loginBtn = document.getElementById('doLoginBtn');
-    const usernameInput = document.getElementById('loginUsername');
-    const passwordInput = document.getElementById('loginPassword');
-    const errorMsgDiv = document.getElementById('loginErrorMsg');
-    
-    function performLogin() {
-        const username = usernameInput.value.trim();
-        const password = passwordInput.value.trim();
-        // hardcoded demo: admin / tyremark
-        if(username === 'admin' && password === 'tyremark') {
-            errorMsgDiv.style.display = 'none';
-            // animate out login overlay
-            loginOverlay.classList.add('hidden');
-            setTimeout(() => {
-                loginOverlay.style.display = 'none';
-                dashboardDiv.style.display = 'block';
-                reportFab.style.display = 'flex';
-                // init dashboard core
-                initDashboardUI();
-                // additional refresh for date
-                setInterval(() => updateDateBadge(), 60000);
-            }, 600);
-        } else {
-            errorMsgDiv.style.display = 'block';
-            setTimeout(() => { errorMsgDiv.style.display = 'none'; }, 2800);
-        }
-    }
-    
-    loginBtn.addEventListener('click', performLogin);
-    [usernameInput, passwordInput].forEach(inp => {
-        inp.addEventListener('keypress', (e) => { if(e.key === 'Enter') performLogin(); });
+    }, 400);
+
+    // Loader animation (starts after 0.5s)
+    setTimeout(()=>{
+        animateLoader(()=>{
+            // Fade out splash
+            splash.classList.add('fade-out');
+            setTimeout(()=>{
+                splash.style.display='none';
+                afterDone();
+            }, 700);
+        });
+    }, 500);
+}
+
+// ===== DASHBOARD INIT =====
+function updateDateBadge(){
+    const now = new Date();
+    document.getElementById('currentDateText').innerText = now.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+    const m = document.getElementById('monthLabel');
+    if(m) m.innerText = now.toLocaleString('default',{month:'long',year:'numeric'});
+}
+function renderTipperList(){
+    let html='';
+    tipperIssuanceData.forEach(tip=>{
+        html+=`<div class="tipper-item">
+            <div class="tipper-name"><i class="fas fa-truck"></i> ${tip.tipperId}</div>
+            <div class="issue-badge">${tip.tyresIssued} tyres</div>
+        </div>`;
     });
-    
-    // (prevent dashboard flash)
-    dashboardDiv.style.display = 'none';
-    reportFab.style.display = 'none';
+    html+=`<div style="padding:10px 22px;font-size:0.72rem;color:#6a8aae;text-align:center;border-top:1px solid #f0f3f8;">
+        <i class="fas fa-info-circle"></i> +${tipperNumbers.length-tipperIssuanceData.length} more tippers active
+    </div>`;
+    document.getElementById('tipperListContainer').innerHTML=html;
+}
+function renderStockAndInspection(){
+    const pct = Math.min(Math.round((tyresInStock/150)*100),100);
+    const alert = tyresInStock<50
+        ? `<div style="background:#fff6e5;border-radius:12px;padding:10px;margin-top:12px;font-size:0.85rem;"><i class="fas fa-exclamation-triangle" style="color:#e67e22;"></i> <strong>Low stock:</strong> Only ${tyresInStock} tyres. Reorder recommended.</div>`
+        : `<div style="background:#e8f5e9;border-radius:12px;padding:10px;margin-top:12px;font-size:0.85rem;"><i class="fas fa-check-circle" style="color:#27ae60;"></i> Stock level adequate.</div>`;
+    document.getElementById('stockDetailsPanel').innerHTML=`
+        <div class="stock-row"><span>Current Stock</span><span>${tyresInStock} tyres</span></div>
+        <div class="stock-row"><span>Monthly Purchase</span><span>${tyresPurchasedThisMonth} tyres</span></div>
+        <div class="stock-row"><span>Monthly Usage</span><span>${tyresUsedThisMonth} tyres</span></div>
+        <div class="progress-bar-bg"><div class="progress-fill" style="width:${pct}%;"></div></div>
+        <div style="font-size:0.7rem;margin-bottom:14px;color:#6b8ca4;">Stock capacity: ${pct}%</div>
+        <div class="inspection-status">
+            <strong><i class="fas fa-clipboard-check"></i> Tyre Inspection Report</strong>
+            <div style="margin-top:10px;">
+                <div>✅ Good: <span class="status-badge good-status">${goodTyres} tyres</span></div>
+                <div>⚠️ Normal: <span class="status-badge normal-status">${normalTyres} tyres</span></div>
+                <div>❌ Replace: <span class="status-badge poor-status">${notGoodTyres} tyres</span></div>
+            </div>
+            <div style="margin-top:10px;font-size:0.75rem;color:#6b8ca4;">⚙️ Avg Tyre Life: 4652 KM</div>
+        </div>${alert}`;
+}
+function populateReportTable(){
+    let html='';
+    tyreReportItems.forEach((item,i)=>{
+        const d=new Date(item.dateFitted).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+        html+=`<tr><td>${i+1}</td><td><strong>${item.tyreNo}</strong></td><td><i class="fas fa-truck"></i> ${item.tipper}</td><td>${d}</td><td>${item.kmr.toLocaleString()} km</td><td>${item.hmr} hrs</td><td><span class="badge-position">${item.position}</span></td></tr>`;
+    });
+    document.getElementById('reportTableBody').innerHTML=html;
+}
+function initDashboardUI(){
+    updateDateBadge();
+    renderTipperList();
+    renderStockAndInspection();
+    document.getElementById('viewAllTipperLink')?.addEventListener('click',e=>{
+        e.preventDefault();
+        const all=tipperNumbers.map((t,i)=>({tipperId:t,tyresIssued:i<4?4:i<8?3:2}));
+        let msg='📋 COMPLETE TIPPER REPORT\n'+'='.repeat(40)+'\n';
+        all.forEach(t=>{msg+=`${t.tipperId} : ${t.tyresIssued} tyres\n`;});
+        msg+=`\nTotal: ${tyresUsedThisMonth} | Avg: ${(tyresUsedThisMonth/tipperNumbers.length).toFixed(1)}`;
+        alert(msg);
+    });
+    const modal=document.getElementById('tyreReportModal');
+    document.getElementById('openReportBtn').onclick=()=>{populateReportTable();modal.style.display='flex';document.body.style.overflow='hidden';};
+    document.getElementById('closeModalBtn').onclick=()=>{modal.style.display='none';document.body.style.overflow='auto';};
+    window.onclick=e=>{if(e.target===modal){modal.style.display='none';document.body.style.overflow='auto';}};
+    setInterval(updateDateBadge,60000);
+}
+
+// ===== LOGIN LOGIC =====
+const loginOverlay=document.getElementById('loginOverlay');
+const dashboardDiv=document.getElementById('mainDashboard');
+const reportFab=document.getElementById('openReportBtn');
+
+function performLogin(){
+    const u=document.getElementById('loginUsername').value.trim();
+    const p=document.getElementById('loginPassword').value.trim();
+    if(u==='admin'&&p==='tyremark'){
+        document.getElementById('loginErrorMsg').style.display='none';
+        // Fade login out
+        loginOverlay.classList.add('hidden');
+        setTimeout(()=>{
+            loginOverlay.style.display='none';
+            // Run splash then show dashboard
+            runSplash(()=>{
+                dashboardDiv.style.display='block';
+                reportFab.style.display='flex';
+                initDashboardUI();
+            });
+        }, 650);
+    } else {
+        const err=document.getElementById('loginErrorMsg');
+        err.style.display='block';
+        setTimeout(()=>{err.style.display='none';},2800);
+    }
+}
+
+document.getElementById('doLoginBtn').addEventListener('click',performLogin);
+['loginUsername','loginPassword'].forEach(id=>{
+    document.getElementById(id).addEventListener('keypress',e=>{if(e.key==='Enter')performLogin();});
+});
+
+// Prevent flash
+dashboardDiv.style.display='none';
+reportFab.style.display='none';
 </script>
 </body>
 </html>
